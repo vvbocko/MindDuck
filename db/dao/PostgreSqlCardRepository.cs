@@ -16,7 +16,7 @@ public sealed class PostgreSqlCardRepository : ICardRepository
     {
         using var connection = _dataSource.OpenConnection();
         using var command = new NpgsqlCommand(
-            "SELECT card_id, name, power, ability FROM cards WHERE card_id = @id",
+            "SELECT card_id, name, power FROM cards WHERE card_id = @id",
             connection);
         command.Parameters.AddWithValue("id", id);
 
@@ -33,7 +33,7 @@ public sealed class PostgreSqlCardRepository : ICardRepository
     {
         using var connection = _dataSource.OpenConnection();
         using var command = new NpgsqlCommand(
-            "SELECT card_id, name, power, ability FROM cards ORDER BY card_id",
+            "SELECT card_id, name, power FROM cards ORDER BY card_id",
             connection);
         using var reader = command.ExecuteReader();
 
@@ -46,14 +46,31 @@ public sealed class PostgreSqlCardRepository : ICardRepository
         return cards;
     }
 
+    public List<int> GetCardAbilities(int cardId)
+    {
+        using var connection = _dataSource.OpenConnection();
+        using var command = new NpgsqlCommand(
+            "SELECT ability_id FROM card_abilities WHERE card_id = @cardId",
+            connection);
+        command.Parameters.AddWithValue("cardId", cardId);
+
+        using var reader = command.ExecuteReader();
+        var abilities = new List<int>();
+        while (reader.Read())
+        {
+            abilities.Add(reader.GetInt32(0));
+        }
+
+        return abilities;
+    }
+
     private static Card ReadCard(NpgsqlDataReader reader)
     {
         return new Card
         {
             CardId = reader.GetInt32(0),
             Name = reader.GetString(1),
-            Power = reader.GetInt32(2),
-            Ability = reader.GetString(3)
+            Power = reader.GetInt32(2)
         };
     }
 }

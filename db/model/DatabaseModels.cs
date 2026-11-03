@@ -3,7 +3,7 @@ public class Card
     public int CardId { get; set; }
     public string Name { get; set; }
     public int Power { get; set; }
-    public string Ability { get; set; }
+    public int Ability { get; set; }
 }
 
 public class MatchResult

@@ -4,4 +4,6 @@ public interface ICardRepository
     Card GetCard(int id);
     // pobiera wszystkie karty z bazy
     List<Card> GetAllCards();
+    // pobiera umiejetnosci karty o dany id
+    List<int> GetCardAbilities(int cardId);
 }
