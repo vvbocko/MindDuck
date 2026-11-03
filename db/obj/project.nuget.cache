@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "+IkT5iToSqxbGC/91SeWQriOLKLjy8YvwrZrpN0sZK0cGdcIy/gCbde0O3udDJ3QDC80mvlaZV8XzeB8ZxVtUA==",
+  "success": true,
+  "projectFilePath": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
+  "expectedPackageFiles": [
+    "/home/iwona/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/home/iwona/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "/home/iwona/.nuget/packages/npgsql/8.0.6/npgsql.8.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}
