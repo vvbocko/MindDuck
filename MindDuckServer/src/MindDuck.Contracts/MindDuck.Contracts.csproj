@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    MindDuck.Contracts = the shared language between client and server.
+    netstandard2.1 so the same DLL works in Unity (MindDuckClient) and in the .NET 10 server.
+    No NuGet dependencies on purpose: plain C# classes only.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>MindDuck.Contracts</RootNamespace>
+    <AssemblyName>MindDuck.Contracts</AssemblyName>
+    <!-- Version of this library. Keep it in step with Protocol.Version (1 -> 1.x.x). -->
+    <Version>1.0.0</Version>
+    <!-- The .xml file gives tooltips in Rider/Visual Studio inside Unity too -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- A warning stops the build, so small mistakes are fixed before anyone else gets the DLL -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- ...except "missing /// comment": we only comment what other people use -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

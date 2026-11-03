@@ -1,0 +1,11 @@
+<!--
+  ORIGINAL lives in MindDuckServer/src/MindDuck.Contracts/. helpers/copy-contracts.ps1 copies it into
+  MindDuckClient/Assets/Plugins/MindDuck/ next to the DLL. Edit only the original.
+
+  Keeps every class/property of MindDuck.Contracts in WebGL builds.
+  Unity's code stripping would otherwise remove setters that only Newtonsoft.Json calls (via reflection),
+  and messages would arrive with empty fields.
+-->
+<linker>
+  <assembly fullname="MindDuck.Contracts" preserve="all" />
+</linker>
