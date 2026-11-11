@@ -1,3 +1,4 @@
+using MindDuck.Contracts;
 public class Card
 {
     public string CardId { get; set; }
@@ -9,6 +10,7 @@ public class Card
     public Keyword? Keyword { get; set; }
 
     public ICollection<CardAbility> Abilities { get; set; } = new List<CardAbility>();
+    public string ArtKey { get; set; }
 }
 
 public class CardAbility

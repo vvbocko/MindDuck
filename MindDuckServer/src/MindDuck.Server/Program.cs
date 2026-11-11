@@ -17,4 +17,10 @@ builder.Services.AddScoped<IPlayerRepository, PostgreSqlPlayerRepository>();
 var app = builder.Build();
 
 // endpointy API tutaj beda
+app.MapGet(
+    "/api/cards",
+    (ICardRepository repo) =>
+    {
+        return repo.GetAllCards();
+    });
 app.Run();

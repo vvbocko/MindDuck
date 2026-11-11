@@ -11,3 +11,7 @@
 /home/iwona/pr-zesp/MindDuck/db/obj/Debug/net8.0/refint/Sketch.dll
 /home/iwona/pr-zesp/MindDuck/db/obj/Debug/net8.0/Sketch.pdb
 /home/iwona/pr-zesp/MindDuck/db/obj/Debug/net8.0/ref/Sketch.dll
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net8.0/MindDuck.Contracts.dll
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net8.0/MindDuck.Contracts.pdb
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net8.0/MindDuck.Contracts.xml
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net8.0/Sketch.csproj.CopyComplete

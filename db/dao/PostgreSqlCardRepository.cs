@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Npgsql;
+using MindDuck.Contracts;
 
 
 
@@ -89,7 +90,7 @@ public sealed class PostgreSqlCardRepository : ICardRepository
             CardId = reader.GetString(0),
             Name = reader.GetString(1),
             Power = reader.GetInt32(2),
-            Keyword = Keyword = reader.IsDBNull(3)
+            Keyword = reader.IsDBNull(3)
             ? null
             : (Keyword?)reader.GetInt32(3),
             ArtKey = reader.IsDBNull(4) ? null : reader.GetString(4),

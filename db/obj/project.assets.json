@@ -52,6 +52,16 @@
             "related": ".xml"
           }
         }
+      },
+      "MindDuck.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "compile": {
+          "bin/placeholder/MindDuck.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MindDuck.Contracts.dll": {}
+        }
       }
     }
   },
@@ -183,10 +193,16 @@
         "npgsql.nuspec",
         "postgresql.png"
       ]
+    },
+    "MindDuck.Contracts/1.0.0": {
+      "type": "project",
+      "path": "../MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj",
+      "msbuildProject": "../MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "MindDuck.Contracts >= 1.0.0",
       "Npgsql >= 8.0.6"
     ]
   },
@@ -214,7 +230,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj": {
+              "projectPath": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
