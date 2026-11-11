@@ -23,4 +23,5 @@ app.MapGet(
     {
         return repo.GetAllCards();
     });
+builder.Services.AddSingleton<MatchManager>();
 app.Run();

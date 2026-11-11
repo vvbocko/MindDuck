@@ -19,7 +19,7 @@ namespace MindDuck.Rules
             return initState;
         }
 
-        public ApplyResult Apply(Player player, GameCommand command)
+        public ApplyResult Apply(GameState state, Player player, GameCommand command)
         {
             // TODO: impl. wykonywania akcji
 

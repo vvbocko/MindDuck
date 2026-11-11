@@ -7,5 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../db/Sketch.csproj" />
+    <ProjectReference Include="../MindDuck.Rules/MindDuck.Rules.csproj" />
   </ItemGroup>
 </Project>

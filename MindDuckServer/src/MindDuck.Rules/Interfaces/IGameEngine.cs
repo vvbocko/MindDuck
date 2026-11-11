@@ -10,7 +10,7 @@ namespace MindDuck.Rules.Interfaces
         GameState StartNewGame(Player player1, Player player2);
 
         // wykonuje polecenie gracza
-        ApplyResult Apply(Player player, GameCommand command);
+        ApplyResult Apply(GameState state, Player player, GameCommand command);
 
         // zwraca wszystkie legalne akcje gracza
         IReadOnlyList<GameCommand> GetLegalActions(Player player);

@@ -1,3 +1,5 @@
+using MindDuck.Rules.Models;
+
 namespace MindDuck.Rules.Results
 {
     public class ApplyResult
