@@ -14,7 +14,7 @@ namespace MindDuck.Contracts
         /// <summary>null = no keyword.</summary>
         public Keyword? Keyword { get; set; }
         /// <summary>null = no ability.</summary>
-        public AbilityDto Ability { get; set; }
+        public List<AbilityDto> Ability { get; set; }
         /// <summary>Which sprite the client shows (Unity looks it up by this name).</summary>
         public string ArtKey { get; set; }
     }

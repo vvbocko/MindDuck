@@ -1,9 +1,29 @@
 public class Card
 {
-    public int CardId { get; set; }
+    public string CardId { get; set; }
+
     public string Name { get; set; }
+
     public int Power { get; set; }
-    public int Ability { get; set; }
+
+    public Keyword? Keyword { get; set; }
+
+    public ICollection<CardAbility> Abilities { get; set; } = new List<CardAbility>();
+}
+
+public class CardAbility
+{
+    public int Id { get; set; }
+
+    public string CardId { get; set; }
+
+    public AbilityTrigger Trigger { get; set; }
+
+    public AbilityEffect Effect { get; set; }
+
+    public int? Value { get; set; }
+
+    public Card Card { get; set; }
 }
 
 public class MatchResult
