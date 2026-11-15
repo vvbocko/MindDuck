@@ -52,4 +52,13 @@ app.Map(Protocol.WebSocketPath, async context =>
     }
 });
 
+app.MapGet("/health/db", async (NpgsqlDataSource dataSource) =>
+{
+    await using var connection = await dataSource.OpenConnectionAsync();
+    await using var command = new NpgsqlCommand("SELECT 1", connection);
+    await command.ExecuteScalarAsync();
+
+    return Results.Ok(new { database = "connected" });
+});
+
 app.Run();

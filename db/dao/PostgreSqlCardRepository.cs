@@ -17,7 +17,7 @@ public sealed class PostgreSqlCardRepository : ICardRepository
     {
         using var connection = _dataSource.OpenConnection();
         using var command = new NpgsqlCommand(
-            "SELECT card_id, name, power, keyword, art_key FROM cards WHERE card_id = @id",
+            "SELECT id, name, power, keyword, art_key FROM cards WHERE id = @id",
             connection);
         command.Parameters.AddWithValue("id", id);
         Card card;
