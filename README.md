@@ -12,4 +12,4 @@ unset DB_PASSWORD
 dotnet run --project MindDuckServer/src/MindDuck.Server/MindDuck.Server.csproj
 ```
 
-This requires the .NET 8 SDK and a PostgreSQL server reachable at `localhost:5432`.
+This requires the .NET 11 SDK and a PostgreSQL server reachable at `localhost:5432`.
