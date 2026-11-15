@@ -26,7 +26,7 @@ namespace MindDuck.Rules.Results
 
         public static ApplyResult Failure(ApplyErrorCode errorCode, string errorMessage)
         {
-            return new ApplyResult(false, errorCode, errorMessage);
+            return new ApplyResult(false, errorCode, errorMessage, null);
         }
     }
 }

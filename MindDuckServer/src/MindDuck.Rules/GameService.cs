@@ -42,4 +42,19 @@ public class GameService : IGameService
                 break;
         }
     }
+
+    private void HandleAttack(GameState state, AttackCommand command)
+    {
+
+    }
+
+    private void HandlePlayCard(GameState state, PlayCardCommand command)
+    {
+
+    }
+
+    private void HandleDecision(GameState state, SubmitDecisionCommand command)
+    {
+
+    }
 }

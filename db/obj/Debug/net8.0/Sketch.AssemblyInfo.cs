@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sketch")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59b028411ca188ad7628aae8699b1b223e922367")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+240439df98c9f468a4f2c24bd8bb99387b68e07e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sketch")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sketch")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
