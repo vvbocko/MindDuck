@@ -1,0 +1,14 @@
+# Build output of every .NET project, also outside MindDuckServer/
+bin/
+obj/
+
+# IDE and operating-system junk
+.vs/
+.idea/
+.vscode/
+*.user
+Thumbs.db
+.DS_Store
+
+# Local secrets (passwords, connection strings)
+.env
