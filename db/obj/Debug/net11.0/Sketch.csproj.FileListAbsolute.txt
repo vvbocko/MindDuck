@@ -1,0 +1,17 @@
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/Sketch.deps.json
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/Sketch.dll
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/Sketch.pdb
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/MindDuck.Contracts.dll
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/MindDuck.Contracts.pdb
+/home/iwona/pr-zesp/MindDuck/db/bin/Debug/net11.0/MindDuck.Contracts.xml
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.csproj.AssemblyReference.cache
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.GeneratedMSBuildEditorConfig.editorconfig
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.AssemblyInfoInputs.cache
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.AssemblyInfo.cs
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.csproj.CoreCompileInputs.cache
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.sourcelink.json
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.csproj.Up2Date
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.dll
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/refint/Sketch.dll
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/Sketch.pdb
+/home/iwona/pr-zesp/MindDuck/db/obj/Debug/net11.0/ref/Sketch.dll

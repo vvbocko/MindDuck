@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS card_abilities (
     card_id VARCHAR(255) NOT NULL REFERENCES cards (id) ON DELETE CASCADE,
     trigger INT NOT NULL,
     effect INT NOT NULL,
-    value INT NULL,
+    value INT NULL
 );
 
 CREATE TABLE IF NOT EXISTS players (
