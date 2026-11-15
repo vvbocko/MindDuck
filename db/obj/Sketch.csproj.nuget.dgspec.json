@@ -1,88 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj": {}
+    "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj": {}
   },
   "projects": {
-    "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj": {
+    "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj",
-        "projectName": "MindDuck.Contracts",
-        "projectPath": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj",
-        "packagesPath": "/home/iwona/.nuget/packages/",
-        "outputPath": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/home/iwona/.nuget/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "netstandard2.1"
-        ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netstandard2.1": {
-            "framework": "netstandard2.1",
-            "targetAlias": "netstandard2.1",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "allWarningsAsErrors": true,
-          "warnAsError": [
-            "NU1605"
-          ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "11.0.100"
-      },
-      "frameworks": {
-        "netstandard2.1": {
-          "framework": "netstandard2.1",
-          "targetAlias": "netstandard2.1",
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "NETStandard.Library.Ref",
-              "version": "[2.1.0, 2.1.0]"
-            }
-          ],
-          "frameworkReferences": {
-            "NETStandard.Library": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "/home/iwona/dotnet/sdk/11.0.100/RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
+        "projectUniqueName": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
         "projectName": "Sketch",
-        "projectPath": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
-        "packagesPath": "/home/iwona/.nuget/packages/",
-        "outputPath": "/home/iwona/pr-zesp/MindDuck/db/obj/",
+        "projectPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
+        "packagesPath": "C:\\Users\\zosia\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/iwona/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\zosia\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net11.0"
@@ -95,8 +27,8 @@
             "framework": "net11.0",
             "targetAlias": "net11.0",
             "projectReferences": {
-              "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj": {
-                "projectPath": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj"
+              "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj": {
+                "projectPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj"
               }
             }
           }
@@ -139,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/iwona/dotnet/sdk/11.0.100/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.Extensions.Caching.Abstractions": "(,11.0.32767]",
@@ -450,6 +382,74 @@
             "System.Xml.XPath": "(,4.3.32767]",
             "System.Xml.XPath.XDocument": "(,5.0.32767]"
           }
+        }
+      }
+    },
+    "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj",
+        "projectName": "MindDuck.Contracts",
+        "projectPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj",
+        "packagesPath": "C:\\Users\\zosia\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\zosia\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "framework": "netstandard2.1",
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "allWarningsAsErrors": true,
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "11.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "framework": "netstandard2.1",
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "NETStandard.Library.Ref",
+              "version": "[2.1.0, 2.1.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

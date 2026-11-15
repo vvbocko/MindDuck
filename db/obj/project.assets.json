@@ -64,19 +64,19 @@
     ]
   },
   "packageFolders": {
-    "/home/iwona/.nuget/packages/": {}
+    "C:\\Users\\zosia\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
+      "projectUniqueName": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
       "projectName": "Sketch",
-      "projectPath": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
-      "packagesPath": "/home/iwona/.nuget/packages/",
-      "outputPath": "/home/iwona/pr-zesp/MindDuck/db/obj/",
+      "projectPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
+      "packagesPath": "C:\\Users\\zosia\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/iwona/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\zosia\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net11.0"
@@ -89,8 +89,8 @@
           "framework": "net11.0",
           "targetAlias": "net11.0",
           "projectReferences": {
-            "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj": {
-              "projectPath": "/home/iwona/pr-zesp/MindDuck/MindDuckServer/src/MindDuck.Contracts/MindDuck.Contracts.csproj"
+            "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj": {
+              "projectPath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\MindDuckServer\\src\\MindDuck.Contracts\\MindDuck.Contracts.csproj"
             }
           }
         }
@@ -133,7 +133,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/iwona/dotnet/sdk/11.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.Extensions.Caching.Abstractions": "(,11.0.32767]",

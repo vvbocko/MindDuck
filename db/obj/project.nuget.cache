@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "BMudqeREkrM=",
+  "dgSpecHash": "/4G0kXy1qeo=",
   "success": true,
-  "projectFilePath": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
+  "projectFilePath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
   "expectedPackageFiles": [
-    "/home/iwona/.nuget/packages/npgsql/8.0.6/npgsql.8.0.6.nupkg.sha512"
+    "C:\\Users\\zosia\\.nuget\\packages\\npgsql\\8.0.6\\npgsql.8.0.6.nupkg.sha512"
   ],
   "logs": []
 }
