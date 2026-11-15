@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "0NNig2Z0osOe3avInndcVonYEHTbc/GmKjhKYDfGcqqg51TJ/QYfpNIUHQtnBv+5lHbQGtCuLXRLUXHRjXggkA==",
+  "dgSpecHash": "t8VbJIyJo3k=",
   "success": true,
-  "projectFilePath": "/home/iwona/pr-zesp/MindDuck/db/Sketch.csproj",
+  "projectFilePath": "C:\\Users\\zosia\\OneDrive\\Pulpit\\Studia\\Sem5\\Projekt_Zespołowy\\mindbug\\MindDuck\\db\\Sketch.csproj",
   "expectedPackageFiles": [
-    "/home/iwona/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
-    "/home/iwona/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
-    "/home/iwona/.nuget/packages/npgsql/8.0.6/npgsql.8.0.6.nupkg.sha512"
+    "C:\\Users\\zosia\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\zosia\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\zosia\\.nuget\\packages\\npgsql\\8.0.6\\npgsql.8.0.6.nupkg.sha512",
+    "C:\\Users\\zosia\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.34\\microsoft.netcore.app.ref.8.0.34.nupkg.sha512",
+    "C:\\Users\\zosia\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.34\\microsoft.windowsdesktop.app.ref.8.0.34.nupkg.sha512",
+    "C:\\Users\\zosia\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.34\\microsoft.aspnetcore.app.ref.8.0.34.nupkg.sha512"
   ],
   "logs": []
 }

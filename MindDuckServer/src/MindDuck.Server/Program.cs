@@ -1,4 +1,5 @@
 using Npgsql;
+using MindDuck.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,14 +15,21 @@ builder.Services.AddScoped<ICardRepository, PostgreSqlCardRepository>();
 builder.Services.AddScoped<IMatchRepository, PostgreSqlMatchRepository>();
 builder.Services.AddScoped<IPlayerRepository, PostgreSqlPlayerRepository>();
 
+builder.Services.AddSingleton<RoomManager>();
+builder.Services.AddSingleton<MatchManager>();
+
 var app = builder.Build();
 
 // endpointy API tutaj beda
-app.MapGet(
-    "/api/cards",
-    (ICardRepository repo) =>
+app.MapGet("/api/cards", (ICardRepository repo) =>
     {
         return repo.GetAllCards();
     });
-builder.Services.AddSingleton<MatchManager>();
+
+app.MapPost("/api/rooms", (RoomManager roomManager) =>
+{
+    string roomCode = roomManager.CreateRoom();
+    return Results.Ok(new { RoomCode = roomCode });
+});
+
 app.Run();
