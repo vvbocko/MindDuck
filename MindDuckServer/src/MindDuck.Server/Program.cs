@@ -1,4 +1,6 @@
 using Npgsql;
+using MindDuck.Contracts;
+using MindDuck.Server.WebSockets;
 using MindDuck.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +19,11 @@ builder.Services.AddScoped<IPlayerRepository, PostgreSqlPlayerRepository>();
 
 builder.Services.AddSingleton<RoomManager>();
 builder.Services.AddSingleton<MatchManager>();
+builder.Services.AddTransient<GameWebSocketHandler>();
 
 var app = builder.Build();
+
+app.UseWebSockets();
 
 // endpointy API tutaj beda
 app.MapGet("/api/cards", (ICardRepository repo) =>
@@ -30,6 +35,21 @@ app.MapPost("/api/rooms", (RoomManager roomManager) =>
 {
     string roomCode = roomManager.CreateRoom();
     return Results.Ok(new { RoomCode = roomCode });
+});
+
+app.Map(Protocol.WebSocketPath, async context =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var handler = context.RequestServices.GetRequiredService<GameWebSocketHandler>();
+
+        await handler.HandleAsync(webSocket);
+    }
+    else
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+    }
 });
 
 app.Run();
