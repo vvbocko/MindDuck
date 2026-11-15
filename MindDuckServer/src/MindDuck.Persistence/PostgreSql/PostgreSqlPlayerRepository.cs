@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Npgsql;
 
 namespace MindDuck.Persistence;
@@ -11,16 +13,16 @@ public sealed class PostgreSqlPlayerRepository : IPlayerRepository
     public PostgreSqlPlayerRepository(NpgsqlDataSource dataSource)
         => _dataSource = dataSource;
 
-    public Player GetPlayer(int id)
+    public async Task<Player> GetPlayerAsync(int id, CancellationToken cancellationToken = default)
     {
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "SELECT id, name, wins, losses FROM players WHERE id = @id",
             connection);
         command.Parameters.AddWithValue("id", id);
-        using var reader = command.ExecuteReader();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
 
-        if (!reader.Read())
+        if (!await reader.ReadAsync(cancellationToken))
         {
             throw new KeyNotFoundException($"Player {id} was not found.");
         }
@@ -34,12 +36,12 @@ public sealed class PostgreSqlPlayerRepository : IPlayerRepository
         };
     }
 
-    public void SavePlayer(Player player)
+    public async Task SavePlayerAsync(Player player, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(player);
 
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "INSERT INTO players (id, name, wins, losses) VALUES (@id, @name, @wins, @losses) " +
             "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, wins = EXCLUDED.wins, losses = EXCLUDED.losses",
             connection);
@@ -47,19 +49,22 @@ public sealed class PostgreSqlPlayerRepository : IPlayerRepository
         command.Parameters.AddWithValue("name", player.Name);
         command.Parameters.AddWithValue("wins", player.Wins);
         command.Parameters.AddWithValue("losses", player.Losses);
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public void UpdateStats(int playerId, bool win)
+    public async Task UpdateStatsAsync(
+        int playerId,
+        bool win,
+        CancellationToken cancellationToken = default)
     {
         var statColumn = win ? "wins" : "losses";
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             $"UPDATE players SET {statColumn} = {statColumn} + 1 WHERE id = @id",
             connection);
         command.Parameters.AddWithValue("id", playerId);
 
-        if (command.ExecuteNonQuery() == 0)
+        if (await command.ExecuteNonQueryAsync(cancellationToken) == 0)
         {
             throw new KeyNotFoundException($"Player {playerId} was not found.");
         }

@@ -27,10 +27,8 @@ var app = builder.Build();
 app.UseWebSockets();
 
 // endpointy API tutaj beda
-app.MapGet("/api/cards", (ICardRepository repo) =>
-    {
-        return repo.GetAllCards();
-    });
+app.MapGet("/api/cards", async (ICardRepository repo, CancellationToken cancellationToken) =>
+    await repo.GetAllCardsAsync(cancellationToken));
 
 app.MapPost("/api/rooms", (RoomManager roomManager) =>
 {

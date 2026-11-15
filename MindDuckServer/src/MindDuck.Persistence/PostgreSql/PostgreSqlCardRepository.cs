@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Npgsql;
 using MindDuck.Contracts;
 
@@ -13,62 +15,66 @@ public sealed class PostgreSqlCardRepository : ICardRepository
         => _dataSource = dataSource;
 
 
-    public Card GetCard(string id)
+    public async Task<Card> GetCardAsync(string id, CancellationToken cancellationToken = default)
     {
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "SELECT id, name, power, keyword, art_key FROM cards WHERE id = @id",
             connection);
         command.Parameters.AddWithValue("id", id);
         Card card;
-        using (var reader = command.ExecuteReader()) {
-            if (!reader.Read())
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+        {
+            if (!await reader.ReadAsync(cancellationToken))
             {
                 throw new KeyNotFoundException($"Card {id} was not found.");
             }
             card = ReadCard(reader);
         }
 
-        card.Abilities = GetCardAbilities(card.CardId);
+        card.Abilities = await GetCardAbilitiesAsync(card.CardId, cancellationToken);
 
         return card;
     }
 
-    public List<Card> GetAllCards()
+    public async Task<List<Card>> GetAllCardsAsync(CancellationToken cancellationToken = default)
     {
         var cards = new List<Card>();
 
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "SELECT id, name, power, keyword, art_key FROM cards ORDER BY id",
             connection);
 
-        using var reader = command.ExecuteReader();
-
-        while (reader.Read())
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
         {
-            cards.Add(ReadCard(reader));
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                cards.Add(ReadCard(reader));
+            }
         }
 
         foreach (var card in cards)
         {
-            card.Abilities = GetCardAbilities(card.CardId);
+            card.Abilities = await GetCardAbilitiesAsync(card.CardId, cancellationToken);
         }
 
         return cards;
     }
 
-    public List<CardAbility> GetCardAbilities(string cardId)
+    public async Task<List<CardAbility>> GetCardAbilitiesAsync(
+        string cardId,
+        CancellationToken cancellationToken = default)
     {
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "SELECT trigger, effect, value FROM card_abilities WHERE card_id = @cardId",
             connection);
         command.Parameters.AddWithValue("cardId", cardId);
 
-        using var reader = command.ExecuteReader();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         var abilities = new List<CardAbility>();
-        while (reader.Read())
+        while (await reader.ReadAsync(cancellationToken))
         {
             abilities.Add(new CardAbility
             {

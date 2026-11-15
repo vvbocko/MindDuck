@@ -17,7 +17,7 @@
         <member name="P:MindDuck.Contracts.CardDefinitionDto.Keyword">
             <summary>null = no keyword.</summary>
         </member>
-        <member name="P:MindDuck.Contracts.CardDefinitionDto.Ability">
+        <member name="P:MindDuck.Contracts.CardDefinitionDto.Abilities">
             <summary>null = no ability.</summary>
         </member>
         <member name="P:MindDuck.Contracts.CardDefinitionDto.ArtKey">
@@ -98,6 +98,18 @@
         <member name="T:MindDuck.Contracts.LeaveRoom">
             <summary>Player quits the room/match. Opponent gets MatchEnded(OpponentLeft).</summary>
         </member>
+        <member name="T:MindDuck.Contracts.DecisionOptionDto">
+            <summary>One choice presented to a player in a DecisionRequired message.</summary>
+        </member>
+        <member name="P:MindDuck.Contracts.DecisionOptionDto.OptionId">
+            <summary>Send this value back in SubmitDecision.OptionId.</summary>
+        </member>
+        <member name="P:MindDuck.Contracts.DecisionOptionDto.TargetInstanceId">
+            <summary>Instance ID of the card this option targets, when applicable.</summary>
+        </member>
+        <member name="P:MindDuck.Contracts.DecisionOptionDto.Label">
+            <summary>Human-readable label shown to the player.</summary>
+        </member>
         <member name="T:MindDuck.Contracts.ClientMessage">
             <summary>Base class of every message the CLIENT sends to the server over WebSocket.</summary>
         </member>
@@ -167,9 +179,6 @@
         <member name="F:MindDuck.Contracts.Protocol.Version">
             <summary>Bump when a message is renamed, removed or changes meaning (breaks old clients).</summary>
         </member>
-        <member name="F:MindDuck.Contracts.Protocol.RoomCodeAlphabet">
-            <summary>No 0/O/1/I/L — easy to read out loud.</summary>
-        </member>
         <member name="F:MindDuck.Contracts.Protocol.MaxNicknameLength">
             <summary>Longer (or empty) nickname -> Error with ErrorCode.InvalidNickname.</summary>
         </member>
@@ -200,39 +209,20 @@
         <member name="T:MindDuck.Contracts.ErrorResponse">
             <summary>Body of every REST error (4xx/5xx).</summary>
         </member>
-        <member name="T:MindDuck.Contracts.DecisionOptionDto">
-            <summary>One button in the decision panel.</summary>
-        </member>
-        <member name="P:MindDuck.Contracts.DecisionOptionDto.OptionId">
-            <summary>Send this back in SubmitDecision.OptionId.</summary>
-        </member>
-        <member name="P:MindDuck.Contracts.DecisionOptionDto.Label">
-            <summary>Button text, e.g. "Use a Mindbug".</summary>
-        </member>
-        <member name="P:MindDuck.Contracts.DecisionOptionDto.TargetInstanceId">
-            <summary>Set when the option is "this creature" (Block, ChooseTarget) so the client can highlight it.</summary>
-        </member>
-        <member name="T:MindDuck.Contracts.DecisionOptionIds">
-            <summary>The fixed OptionId values. Creature options use ForCreature(instanceId).</summary>
-        </member>
-        <member name="M:MindDuck.Contracts.DecisionOptionIds.ForCreature(System.Int32)">
-            <summary>"creature-9" — used by Block and ChooseTarget options.</summary>
-        </member>
         <member name="T:MindDuck.Contracts.GameEventDto">
-            <summary>
-            One thing that just happened, e.g. { "type": "CardMindbugged", "seat": "P2", "instanceId": 9, ... }.
-            Fields that don't apply to an event type are null.
-            Hidden information: for the opponent's CardsDrawn, InstanceId/DefinitionId are null and Amount = how many.
-            </summary>
+            <summary>A game event used by the client for animations and the match log.</summary>
         </member>
         <member name="P:MindDuck.Contracts.GameEventDto.Seat">
-            <summary>The player the event is about (who played, who lost life…).</summary>
+            <summary>The player associated with the event, if applicable.</summary>
+        </member>
+        <member name="P:MindDuck.Contracts.GameEventDto.CardInstanceId">
+            <summary>The card associated with the event, if applicable.</summary>
+        </member>
+        <member name="P:MindDuck.Contracts.GameEventDto.TargetCardInstanceId">
+            <summary>A target card associated with the event, if applicable.</summary>
         </member>
         <member name="P:MindDuck.Contracts.GameEventDto.Amount">
-            <summary>Number for the event: life change (+2 / -1), cards drawn, cards discarded…</summary>
-        </member>
-        <member name="P:MindDuck.Contracts.GameEventDto.Text">
-            <summary>Ready-made log line, e.g. "Bob used a Mindbug on Ember Wolf".</summary>
+            <summary>A count or numeric change associated with the event, if applicable.</summary>
         </member>
         <member name="T:MindDuck.Contracts.GameStateView">
             <summary>

@@ -33,7 +33,7 @@ public class CardAbility
 public class MatchResult
 {
     public string MatchId { get; set; }
-    public string Winner { get; set; }
+    public string? Winner { get; set; }
 }
 
 public class Player

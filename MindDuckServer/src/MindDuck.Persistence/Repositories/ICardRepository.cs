@@ -1,11 +1,14 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace MindDuck.Persistence;
 
 public interface ICardRepository
 {
     // pobiera karte od danym id
-    Card GetCard(string id);
+    Task<Card> GetCardAsync(string id, CancellationToken cancellationToken = default);
     // pobiera wszystkie karty z bazy
-    List<Card> GetAllCards();
+    Task<List<Card>> GetAllCardsAsync(CancellationToken cancellationToken = default);
     // pobiera umiejetnosci karty o dany id
-    List<CardAbility> GetCardAbilities(string cardId);
+    Task<List<CardAbility>> GetCardAbilitiesAsync(string cardId, CancellationToken cancellationToken = default);
 }

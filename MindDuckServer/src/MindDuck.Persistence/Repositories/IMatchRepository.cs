@@ -1,16 +1,19 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace MindDuck.Persistence;
 
 public interface IMatchRepository
 {
     // tworzy nowy wpis gry w bazie
-    void CreateMatch(string matchId);
+    Task CreateMatchAsync(string matchId, CancellationToken cancellationToken = default);
 
     // dopisuje ruchy z przebiegu gry
-    void AppendEvents(string matchId, List<string> events);
+    Task AppendEventsAsync(string matchId, List<string> events, CancellationToken cancellationToken = default);
 
     // zapisuje wynik/zwycięzcę gry
-    void FinishMatch(string matchId, string winner);
+    Task FinishMatchAsync(string matchId, string winner, CancellationToken cancellationToken = default);
 
     // pobiera ostatnie mecze
-    List<MatchResult> GetRecent(int limit);
+    Task<List<MatchResult>> GetRecentAsync(int limit, CancellationToken cancellationToken = default);
 }

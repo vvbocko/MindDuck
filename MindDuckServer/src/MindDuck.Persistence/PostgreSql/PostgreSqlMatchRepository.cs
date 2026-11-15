@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Npgsql;
 
 namespace MindDuck.Persistence;
@@ -12,23 +14,26 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
         => _dataSource = dataSource;
 
 
-    public void CreateMatch(string matchId)
+    public async Task CreateMatchAsync(string matchId, CancellationToken cancellationToken = default)
     {
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "INSERT INTO matches (match_id) VALUES (@match_id)",
             connection);
         command.Parameters.AddWithValue("match_id", matchId);
-        command.ExecuteNonQuery();
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public void AppendEvents(string matchId, List<string> events)
+    public async Task AppendEventsAsync(
+        string matchId,
+        List<string> events,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(events);
 
-        using var connection = _dataSource.OpenConnection();
-        using var transaction = connection.BeginTransaction();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "INSERT INTO match_events (match_id, event) VALUES (@match_id, @event)",
             connection,
             transaction);
@@ -39,48 +44,51 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
         foreach (var matchEvent in events)
         {
             eventParameter.Value = matchEvent;
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        transaction.Commit();
+        await transaction.CommitAsync(cancellationToken);
     }
 
-    public void FinishMatch(string matchId, string winner)
+    public async Task FinishMatchAsync(
+        string matchId,
+        string winner,
+        CancellationToken cancellationToken = default)
     {
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "UPDATE matches SET winner = @winner, finished_at = CURRENT_TIMESTAMP WHERE match_id = @match_id",
             connection);
         command.Parameters.AddWithValue("match_id", matchId);
         command.Parameters.AddWithValue("winner", winner);
 
-        if (command.ExecuteNonQuery() == 0)
+        if (await command.ExecuteNonQueryAsync(cancellationToken) == 0)
         {
             throw new KeyNotFoundException($"Match '{matchId}' was not found.");
         }
     }
 
-    public List<MatchResult> GetRecent(int limit)
+    public async Task<List<MatchResult>> GetRecentAsync(int limit, CancellationToken cancellationToken = default)
     {
         if (limit < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(limit));
         }
 
-        using var connection = _dataSource.OpenConnection();
-        using var command = new NpgsqlCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             "SELECT match_id, winner FROM matches WHERE finished_at IS NOT NULL ORDER BY finished_at DESC, match_id LIMIT @limit",
             connection);
         command.Parameters.AddWithValue("limit", limit);
-        using var reader = command.ExecuteReader();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
 
         var matches = new List<MatchResult>();
-        while (reader.Read())
+        while (await reader.ReadAsync(cancellationToken))
         {
             matches.Add(new MatchResult
             {
                 MatchId = reader.GetString(0),
-                Winner = reader.GetString(1)
+                Winner = reader.IsDBNull(1) ? null : reader.GetString(1)
             });
         }
 
