@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../db/Sketch.csproj" />
     <ProjectReference Include="../MindDuck.Rules/MindDuck.Rules.csproj" />
+    <ProjectReference Include="..\MindDuck.Persistence\MindDuck.Persistence.csproj" />
+    <ProjectReference Include="..\MindDuck.Contracts\MindDuck.Contracts.csproj" />
   </ItemGroup>
 </Project>

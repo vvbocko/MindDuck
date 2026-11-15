@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MindDuck.Contracts/MindDuck.Contracts.csproj" />
+    <Project Path="src/MindDuck.Persistence/MindDuck.Persistence.csproj" />
+    <Project Path="src/MindDuck.Rules/MindDuck.Rules.csproj" />
+    <Project Path="src/MindDuck.Server/MindDuck.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MindDuck.TestClient/MindDuck.TestClient.csproj" />
+  </Folder>
+</Solution>

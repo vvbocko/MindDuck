@@ -1,5 +1,6 @@
 using Npgsql;
 using MindDuck.Contracts;
+using MindDuck.Persistence;
 using MindDuck.Server.WebSockets;
 using MindDuck.Server.Services;
 
