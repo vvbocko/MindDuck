@@ -6,6 +6,7 @@ namespace MindDuck.Rules.Interfaces
 {
     public interface IGameService
     {
-        void ExecuteCommand(GameState state, GameCommand command);
+        Match StartMatch(Player player1, Player player2);
+        ApplyResult ExecuteCommand(Guid matchId, Player player, GameCommand command);
     }
 }

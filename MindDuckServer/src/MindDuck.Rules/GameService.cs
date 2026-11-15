@@ -14,7 +14,7 @@ public class GameService : IGameService
         _gameEngine = gameEngine;
     }
 
-    public Match StartMatch(Guid matchId, Player player1, Player player2)
+    public Match StartMatch(Player player1, Player player2)
     {
         var match = new Match
         {
@@ -25,36 +25,11 @@ public class GameService : IGameService
     }
 
 
-    public void ExecuteCommand(GameState state, GameCommand command)
+    public ApplyResult ExecuteCommand(Guid matchId, Player player, GameCommand command)
     {
-        switch(command)
-        {
-            case AttackCommand attack:
-                HandleAttack(state, attack);
-                break;
+        var match = _matchManager.GetMatch(matchId);
 
-            case PlayCardCommand play:
-                HandlePlayCard(state, play);
-                break;
-
-            case SubmitDecisionCommand decision:
-                HandleDecision(state, decision);
-                break;
-        }
+        return _gameEngine.Apply(match.GameState, player,command);
     }
 
-    private void HandleAttack(GameState state, AttackCommand command)
-    {
-
-    }
-
-    private void HandlePlayCard(GameState state, PlayCardCommand command)
-    {
-
-    }
-
-    private void HandleDecision(GameState state, SubmitDecisionCommand command)
-    {
-
-    }
 }

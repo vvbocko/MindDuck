@@ -2,7 +2,8 @@ CREATE TABLE IF NOT EXISTS cards (
     id VARCHAR(255) PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
 	power INT NOT NULL,
-	keyword INT NULL,
+	keyword VARCHAR(255) NULL
+        CONSTRAINT ck_cards_keyword CHECK (keyword IN ('Poisonous', 'Tough', 'Frenzy')),
 	art_key VARCHAR(255)
 
 );
@@ -10,8 +11,10 @@ CREATE TABLE IF NOT EXISTS cards (
 CREATE TABLE IF NOT EXISTS card_abilities (
     id SERIAL PRIMARY KEY,
     card_id VARCHAR(255) NOT NULL REFERENCES cards (id) ON DELETE CASCADE,
-    trigger INT NOT NULL,
-    effect INT NOT NULL,
+    trigger VARCHAR(255) NOT NULL
+        CONSTRAINT ck_card_abilities_trigger CHECK (trigger IN ('Play', 'Attack', 'Defeated')),
+    effect VARCHAR(255) NOT NULL
+        CONSTRAINT ck_card_abilities_effect CHECK (effect IN ('GainLife', 'DefeatEnemyCreature', 'OpponentDiscards')),
     value INT NULL
 );
 

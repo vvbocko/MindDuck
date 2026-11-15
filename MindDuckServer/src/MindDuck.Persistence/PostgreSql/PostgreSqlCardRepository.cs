@@ -78,8 +78,8 @@ public sealed class PostgreSqlCardRepository : ICardRepository
         {
             abilities.Add(new CardAbility
             {
-                Trigger = (AbilityTrigger)reader.GetInt32(0),
-                Effect = (AbilityEffect)reader.GetInt32(1),
+                Trigger = Enum.Parse<AbilityTrigger>(reader.GetString(0)),
+                Effect = Enum.Parse<AbilityEffect>(reader.GetString(1)),
                 Value = reader.IsDBNull(2)
                     ? null
                     : reader.GetInt32(2)
@@ -98,7 +98,7 @@ public sealed class PostgreSqlCardRepository : ICardRepository
             Power = reader.GetInt32(2),
             Keyword = reader.IsDBNull(3)
             ? null
-            : (Keyword?)reader.GetInt32(3),
+            : Enum.Parse<Keyword>(reader.GetString(3)),
             ArtKey = reader.IsDBNull(4) ? null : reader.GetString(4),
             Abilities = new List<CardAbility>() // Abilities will be populated separately
         };
