@@ -1,13 +1,11 @@
-namespace MindDuck.Rules.Results
+namespace MindDuck.Rules.Results;
+public enum ApplyErrorCode
 {
-    public enum ApplyErrorCode
-    {
-        None,
-        InvalidCommand,
-        InvalidPlayer,
-        IllegalAction,
-        NotPlayersTurn,
-        InvalidGamePhase,
-        MissingDecision
-    }
+    None,
+    InvalidCommand,
+    InvalidPlayer,
+    IllegalAction,
+    NotPlayersTurn,
+    InvalidGamePhase,
+    MissingDecision
 }

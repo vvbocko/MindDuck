@@ -1,8 +1,43 @@
-namespace MindDuck.Rules.Models
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MindDuck.Rules.Models;
+public class GameState
 {
-    public class GameState
+    public int Turn { get; internal set; } = 1;
+
+    public GamePhase Phase { get; internal set; } = GamePhase.Main;
+
+    public int? ActivePlayerId { get; internal set; }
+
+    public int? WinnerPlayerId { get; internal set; }
+
+    public bool IsDraw { get; internal set; }
+        
+    public IReadOnlyList<Player> Players { get; internal set; }
+
+    public Player ActivePlayer => Players.First(p => p.Id == ActivePlayerId);
+
+    public GameState(Player playerOne, Player playerTwo)
     {
-        public string ActivePlayerName { get; set; }
-        public List<Player> Players { get; set; } = new List<Player>();
+        if (playerOne == null || playerTwo == null) 
+            throw new ArgumentNullException("Players cannot be null.");
+
+        if (playerOne.Id == playerTwo.Id) 
+            throw new ArgumentException("Players must have different IDs.");
+
+        Players = new List<Player> { playerOne, playerTwo };
+        ActivePlayerId = playerOne.Id;
+    }
+
+    public Player GetOpponent(Player player)
+    {
+        return Players.First(p => p.Id != player.Id);
+    }
+
+    public bool ContainsPlayer(Player player)
+    {
+        return Players.Any(p => p.Id == player.Id);
     }
 }

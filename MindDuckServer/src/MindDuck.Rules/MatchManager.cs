@@ -4,7 +4,7 @@ using MindDuck.Rules.Interfaces;
 using MindDuck.Rules.Models;
 using MindDuck.Rules.Results;
 
-
+namespace MindDuck.Rules;
 public class MatchManager
 {
     private readonly Dictionary<Guid, Match>

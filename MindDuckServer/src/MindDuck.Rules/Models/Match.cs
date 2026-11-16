@@ -1,13 +1,12 @@
 using MindDuck.Rules.Commands;
 
-namespace MindDuck.Rules.Models 
+namespace MindDuck.Rules.Models;
+
+public class Match
 {
-    public class Match
-    {
-        public Guid MatchId { get; set; }
+    public Guid MatchId { get; set; }
 
-        public GameState GameState { get; set; }
+    public GameState GameState { get; set; }
 
-        public List<GameCommand> History { get; set; } = new();
-    }
+    public List<GameCommand> History { get; set; } = new();
 }

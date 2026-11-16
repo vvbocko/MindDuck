@@ -1,9 +1,13 @@
-namespace MindDuck.Rules.Commands
+using MindDuck.Rules.Models;
+
+namespace MindDuck.Rules.Commands;
+public class SubmitDecisionCommand(int decitionId, DecisionType decisionType, bool accepted, int? defenderCardId = null) : GameCommand
 {
-    public class SubmitDecisionCommand : GameCommand
-    {
-        public string DecisionType { get; set; } // użycie mindbuga lub obrona, "Mindbug", "Block"
-        public bool Accepted { get; set; } // tak lub nie
-        public int DefenderCardId { get; set; } // id karty broniącej
-    }
+    public int DecisionId { get; } = decitionId;
+
+    public DecisionType DecisionType { get; } = decisionType;
+
+    public bool Accepted { get; } = accepted;
+
+    public int? DefenderCardId { get; } = defenderCardId;
 }

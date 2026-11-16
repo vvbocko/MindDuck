@@ -1,7 +1,5 @@
-namespace MindDuck.Rules.Commands 
+namespace MindDuck.Rules.Commands;
+public sealed class PlayCardCommand(int cardInstanceId) : GameCommand
 {
-    public class PlayCardCommand : GameCommand
-    {
-        public int CardId { get; set; }
-    }
+    public int CardInstanceId { get; } = cardInstanceId;
 }

@@ -1,7 +1,5 @@
-namespace MindDuck.Rules.Commands 
+namespace MindDuck.Rules.Commands;
+public abstract class GameCommand
 {
-    public abstract class GameCommand
-    {
         
-    }
 }

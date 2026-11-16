@@ -5,32 +5,73 @@ using MindDuck.Rules.Interfaces;
 using MindDuck.Rules.Models;
 using MindDuck.Rules.Results;
 
-namespace MindDuck.Rules
+namespace MindDuck.Rules;
+public sealed class GameEngine : IGameEngine 
 {
-    public class GameEngine : IGameEngine {
-        public GameState StartNewGame(Player player1, Player player2)
-        {
-            // TODO: impl. stworzenie nowego stanu gry i przypisanie graczy
-            GameState initState = new GameState();
-            
-            initState.ActivePlayerName = player1.Name;
-            initState.Players = new List<Player> { player1, player2 };
+    public GameState StartNewGame(GameSetup setup)
+    {
+        ArgumentNullException.ThrowIfNull(setup);
 
-            return initState;
+        Player playerOne = setup.PlayerOne;
+        Player playerTwo = setup.PlayerTwo;
+
+        if (playerOne.Id == playerTwo.Id) 
+            throw new ArgumentException("Players must have different IDs.");
+
+        if (setup.StartingLife <= 0)
+            throw new ArgumentException("Starting life must be greater than zero.");
+
+        if (setup.StartingHandSize < 0) 
+            throw new ArgumentException("Starting hand size cannot be negative.");
+
+        if (playerOne.DrawPile.Count < setup.StartingHandSize ||
+            playerTwo.DrawPile.Count < setup.StartingHandSize)
+                throw new InvalidOperationException("Not enough cards in a player's deck.");
+
+        playerOne.Life = setup.StartingLife;
+        playerTwo.Life = setup.StartingLife;
+
+        playerOne.MindDucksLeft = 2;
+        playerTwo.MindDucksLeft = 2;
+
+        playerOne.DrawPile.Shuffle();
+        playerTwo.DrawPile.Shuffle();
+
+        playerOne.DrawCards(setup.StartingHandSize);
+        playerTwo.DrawCards(setup.StartingHandSize);
+
+        return new GameState(playerOne, playerTwo);
+    }
+
+    public ApplyResult Apply(GameState state, Player player, GameCommand command)
+    {
+        // TODO: Implement command execution.
+
+        return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "Game engine is not fully implemented yet.");
+    }
+
+    public IReadOnlyList<GameCommand> GetLegalActions(GameState state, Player player)
+    {
+        if (state.Phase != GamePhase.Main || state.ActivePlayerId != player.Id) 
+            return Array.Empty<GameCommand>();
+
+        List<GameCommand> actions = new();
+
+        // Playing cards
+        foreach (Card card in player.Hand.Cards)
+        {
+            actions.Add(new PlayCardCommand(card.InstanceId));
         }
 
-        public ApplyResult Apply(GameState state, Player player, GameCommand command)
+        // Attacking with creatures 
+        foreach (Card card in player.Board.Cards)
         {
-            // TODO: impl. wykonywania akcji
-
-            return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "Nieskonczony game engine");
+            if (card.CanAttack(state.Turn))
+            {
+                actions.Add(new AttackCommand(card.InstanceId));
+            }
         }
 
-        public IReadOnlyList<GameCommand> GetLegalActions(Player player)
-        {
-            // TODO: impl. sprawdzania legalnych akcji
-            
-            return new List<GameCommand>();
-        }
+        return actions;
     }
 }
