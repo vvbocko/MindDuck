@@ -3,16 +3,16 @@ using MindDuck.Rules.Models;
 namespace MindDuck.Rules.Results;
 public class ApplyResult
 {
-    public bool Success { get; }
+    public bool IsSuccess { get; }
     public ApplyErrorCode ErrorCode { get; }
 
     public string? ErrorMessage { get; }
 
     public GameState UpdatedState { get; private set; }
 
-    private ApplyResult(bool success, ApplyErrorCode errorCode, string? errorMessage, GameState updatedState)
+    private ApplyResult(bool isSuccess, ApplyErrorCode errorCode, string? errorMessage, GameState updatedState)
     {
-        Success = success;
+        IsSuccess = isSuccess;
         ErrorCode = errorCode;
         ErrorMessage = errorMessage;
         UpdatedState = updatedState;

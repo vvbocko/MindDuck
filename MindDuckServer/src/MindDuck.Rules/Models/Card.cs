@@ -43,7 +43,7 @@ public sealed class Card
     public void RegisterAttack()
     {
         if (AttacksThisTurn >= MaxAttacksPerTurn)
-            throw new InvalidOpetationException("This creature cannot attack again this turn.");
+            throw new InvalidOperationException("This creature cannot attack again this turn.");
 
         AttacksThisTurn++;
     }
