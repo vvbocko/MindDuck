@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  server:
+    name: Server - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v6
+
+      - name: Install .NET (version from global.json)
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Build all server projects
+        working-directory: MindDuckServer
+        run: dotnet build MindDuck.slnx --configuration Release
+
+      # Turn this on when MindDuck.Rules.Tests has tests and is in MindDuck.slnx:
+      # - name: Unit tests
+      #   working-directory: MindDuckServer
+      #   run: dotnet test MindDuck.slnx --configuration Release --no-build
+
+  database:
+    name: Database - schema.sql runs
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: mindduck
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v6
+
+      - name: Run schema.sql on an empty database
+        env:
+          PGPASSWORD: ci-only-password
+        run: psql -h localhost -U postgres -d mindduck -v ON_ERROR_STOP=1 -f db/base/schema.sql
