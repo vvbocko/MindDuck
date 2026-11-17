@@ -11,19 +11,16 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        string baseUrl = "http://localhost:5000";
-        string wsUrl = "ws://localhost:5000/ws";
-
         using HttpClient httpClient = new HttpClient();
 
         Console.WriteLine("Test tworzenia pokoju");
-        Console.WriteLine($"Wysyłam zapytanie POST do {baseUrl}/api/rooms...");
+        Console.WriteLine($"Wysyłam zapytanie POST do http://localhost:5000/api/rooms...");
 
-        HttpResponseMessage response = await httpClient.PostAsync($"{baseUrl}/api/rooms", null);
+        HttpResponseMessage response = await httpClient.PostAsync($"http://localhost:5000/api/rooms", null);
         
         if (!response.IsSuccessStatusCode)
         {
-            Console.WriteLine($"Błąd, serwer zwrócił status: {response.StatusCode}");
+            Console.WriteLine($"Błąd: {response.StatusCode}");
             return;
         }
 
@@ -32,15 +29,15 @@ class Program
 
         using JsonDocument doc = JsonDocument.Parse(jsonResponse);
         string roomCode = doc.RootElement.GetProperty("roomCode").GetString();
-        Console.WriteLine($"Udało się, otrzymany kod pokoju to: {roomCode}\n");
+        Console.WriteLine($"Otrzymany kod pokoju to: {roomCode}\n");
 
 
         Console.WriteLine("Test połączenia WebSocket i dołączania do pokoju");
-        Console.WriteLine($"Próba nawiązania połączenia WebSocket z {wsUrl}...");
+        Console.WriteLine($"Łączę się z WebSocketem pod ws://localhost:5000/ws...");
 
         using ClientWebSocket ws = new ClientWebSocket();
-        await ws.ConnectAsync(new Uri(wsUrl), CancellationToken.None);
-        Console.WriteLine("Połączono z serwerem przez WebSocket!");
+        await ws.ConnectAsync(new Uri("ws://localhost:5000/ws"), CancellationToken.None);
+        Console.WriteLine("Połączono z serwerem przez WebSocket\n");
 
         var joinRoomMsg = new JoinRoom
         {
@@ -53,7 +50,7 @@ class Program
         string envelopeJson = JsonSerializer.Serialize(envelope);
         byte[] sendBytes = Encoding.UTF8.GetBytes(envelopeJson);
 
-        Console.WriteLine($"Wysyłanie pakietu JSON przez WebSocket: {envelopeJson}");
+        Console.WriteLine($"Wysyłam pakiet JSON do dołączenia do pokoju przez WebSocket: {envelopeJson}");
         
         await ws.SendAsync(
             new ArraySegment<byte>(sendBytes), 
@@ -69,13 +66,13 @@ class Program
         );
 
         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-        Console.WriteLine($"Odebrano odpowiedź z serwera przez WebSocket:\n{receivedMessage}\n");
+        Console.WriteLine($"Serwer odebrał i odpowiedział przez WebSocket:\n{receivedMessage}\n");
 
         await ws.CloseAsync(
             WebSocketCloseStatus.NormalClosure, 
-            "Test zakończony", 
+            "koniec testu", 
             CancellationToken.None
         );
-        Console.WriteLine("Połączenie WebSocket zamknięte, wszytsko działa.");
+        Console.WriteLine("Zamykam połączenie WebSocket, wszytsko działa.");
     }
 }
