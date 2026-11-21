@@ -17,6 +17,8 @@ public sealed class Card
 
     private int MaxAttacksPerTurn => HasKeyword(Keyword.Frenzy) ? 2 : 1;
 
+    public int Power => Definition.Power;
+
     public Card(int instanceId, CardDefinition definition)
     {
         InstanceId = instanceId;
@@ -40,10 +42,10 @@ public sealed class Card
         EnteredPlayTurn = currentTurn;
     }
 
-    public void RegisterAttack()
+    public void RegisterAttack(int currentTurn)
     {
-        if (AttacksThisTurn >= MaxAttacksPerTurn)
-            throw new InvalidOperationException("This creature cannot attack again this turn.");
+        if (!CanAttack(currentTurn))
+            throw new InvalidOperationException("This creature cannot attack.");
 
         AttacksThisTurn++;
     }

@@ -7,7 +7,10 @@ public class SubmitDecisionCommand(int decitionId, DecisionType decisionType, bo
 
     public DecisionType DecisionType { get; } = decisionType;
 
+    // MindDuck: opponent takes the card
+    // Block: does the defender decide to block
     public bool Accepted { get; } = accepted;
 
+    // blocking creature
     public int? DefenderCardId { get; } = defenderCardId;
 }

@@ -1,13 +1,8 @@
 namespace MindDuck.Rules.Commands;
-public class AttackCommand : GameCommand
-{
-        public int AttackerInstanceId { get; }
-        
-        public int? TargetCreatureInstanceId { get; }
 
-        public AttackCommand(int attackerInstanceId, int? targetCreatureInstaceId = null)
-        {
-                AttackerInstanceId = attackerInstanceId;
-                TargetCreatureInstanceId = targetCreatureInstaceId;
-        }
+public sealed class AttackCommand(int attackerInstanceId, int? targetCreatureInstanceId = null) : GameCommand
+{
+    public int AttackerInstanceId { get; } = attackerInstanceId;
+
+    public int? TargetCreatureInstanceId { get; } = targetCreatureInstanceId;
 }

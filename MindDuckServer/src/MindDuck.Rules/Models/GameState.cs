@@ -19,6 +19,10 @@ public class GameState
 
     public Player ActivePlayer => Players.First(p => p.Id == ActivePlayerId);
 
+    public PendingDecision? PendingDecision { get; set; }
+
+    public int? FrenzyContinuationCardInstanceId { get; set; }
+
     public GameState(Player playerOne, Player playerTwo)
     {
         if (playerOne == null || playerTwo == null) 
@@ -39,5 +43,26 @@ public class GameState
     public bool ContainsPlayer(Player player)
     {
         return Players.Any(p => p.Id == player.Id);
+    }
+
+    public void SetActivePlayer(Player player)
+    {
+        if (!ContainsPlayer(player)) 
+            throw new InvalidOperationException("Player does not belong to this game.");
+        
+        ActivePlayerId = player.Id;
+    }
+
+    public void AdvanceTurn()
+    {
+        Turn++;
+    }
+
+    public void Finish(Player? winner)
+    {
+        Phase = GamePhase.Finished;
+        WinnerPlayerId = winner?.Id;
+        IsDraw = winner is null;
+        PendingDecision = null;
     }
 }

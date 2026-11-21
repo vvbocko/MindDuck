@@ -47,5 +47,12 @@ namespace MindDuck.Rules.Models
 
             return drawnCards;
         }
+
+        public void DrawToFive()
+        {
+            int cardsToDraw = Math.Max(0, 5 - Hand.Count);
+
+            DrawCards(cardsToDraw);
+        }
     }
 }
