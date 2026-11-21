@@ -1,0 +1,222 @@
+[
+  {
+    "id": "quackoon",
+    "name": "Quackoon",
+    "power": 3,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Play",
+        "effect": "OpponentDiscards",
+        "value": 1
+      }
+    ],
+    "artKey": "quackoon"
+  },
+  {
+    "id": "duckobra",
+    "name": "Duckobra",
+    "power": 3,
+    "keyword": "Poisonous",
+    "abilities": [],
+    "artKey": "duckobra"
+  },
+  {
+    "id": "quacksmith",
+    "name": "Quacksmith",
+    "power": 4,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Play",
+        "effect": "GainLife",
+        "value": null
+      }
+    ],
+    "artKey": "quacksmith"
+  },
+  {
+    "id": "wereduck",
+    "name": "Wereduck",
+    "power": 6,
+    "keyword": "Frenzy",
+    "abilities": [],
+    "artKey": "wereduck"
+  },
+  {
+    "id": "mallardillo",
+    "name": "Mallardillo",
+    "power": 3,
+    "keyword": "Tough",
+    "abilities": [
+      {
+        "trigger": "Defeated",
+        "effect": "GainLife",
+        "value": null
+      }
+    ],
+    "artKey": "mallardillo"
+  },
+  {
+    "id": "quacken",
+    "name": "Quacken",
+    "power": 9,
+    "keyword": "Tough",
+    "abilities": [],
+    "artKey": "quacken"
+  },
+  {
+    "id": "beakgeist",
+    "name": "Beakgeist",
+    "power": 4,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Defeated",
+        "effect": "OpponentDiscards",
+        "value": 2
+      }
+    ],
+    "artKey": "beakgeist"
+  },
+  {
+    "id": "quackini",
+    "name": "Quackini",
+    "power": 2,
+    "keyword": "Tough",
+    "abilities": [],
+    "artKey": "quackini"
+  },
+  {
+    "id": "honk-kong",
+    "name": "Honk Kong",
+    "power": 8,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Attack",
+        "effect": "DefeatEnemyCreature",
+        "value": 6
+      }
+    ],
+    "artKey": "honk-kong"
+  },
+  {
+    "id": "ducktopus",
+    "name": "Ducktopus",
+    "power": 5,
+    "keyword": "Poisonous",
+    "abilities": [
+      {
+        "trigger": "Play",
+        "effect": "OpponentDiscards",
+        "value": 1
+      }
+    ],
+    "artKey": "ducktopus"
+  },
+  {
+    "id": "quacktus",
+    "name": "Quacktus",
+    "power": 2,
+    "keyword": "Poisonous",
+    "abilities": [],
+    "artKey": "quacktus"
+  },
+  {
+    "id": "quackrobat",
+    "name": "Quackrobat",
+    "power": 4,
+    "keyword": "Frenzy",
+    "abilities": [],
+    "artKey": "quackrobat"
+  },
+  {
+    "id": "quackula",
+    "name": "Quackula",
+    "power": 5,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Attack",
+        "effect": "GainLife",
+        "value": null
+      }
+    ],
+    "artKey": "quackula"
+  },
+  {
+    "id": "eggsploder",
+    "name": "Eggsploder",
+    "power": 1,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Defeated",
+        "effect": "DefeatEnemyCreature",
+        "value": 3
+      }
+    ],
+    "artKey": "eggsploder"
+  },
+  {
+    "id": "duckydra",
+    "name": "Duckydra",
+    "power": 6,
+    "keyword": "Frenzy",
+    "abilities": [],
+    "artKey": "duckydra"
+  },
+  {
+    "id": "drakenstein",
+    "name": "Drakenstein",
+    "power": 7,
+    "keyword": "Tough",
+    "abilities": [],
+    "artKey": "drakenstein"
+  },
+  {
+    "id": "pteroducktyl",
+    "name": "Pteroducktyl",
+    "power": 5,
+    "keyword": null,
+    "abilities": [
+      {
+        "trigger": "Play",
+        "effect": "DefeatEnemyCreature",
+        "value": 6
+      }
+    ],
+    "artKey": "pteroducktyl"
+  },
+  {
+    "id": "quackodile",
+    "name": "Quackodile",
+    "power": 7,
+    "keyword": "Frenzy",
+    "abilities": [
+      {
+        "trigger": "Attack",
+        "effect": "OpponentDiscards",
+        "value": 1
+      }
+    ],
+    "artKey": "quackodile"
+  },
+  {
+    "id": "ducklops",
+    "name": "Ducklops",
+    "power": 8,
+    "keyword": null,
+    "abilities": [],
+    "artKey": "ducklops"
+  },
+  {
+    "id": "duckasaurus-rex",
+    "name": "Duckasaurus Rex",
+    "power": 10,
+    "keyword": null,
+    "abilities": [],
+    "artKey": "duckasaurus-rex"
+  }
+]
