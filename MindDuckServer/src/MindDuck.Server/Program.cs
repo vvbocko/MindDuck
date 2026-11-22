@@ -4,6 +4,8 @@ using MindDuck.Persistence;
 using MindDuck.Server.WebSockets;
 using MindDuck.Server.Services;
 using MindDuck.Rules;
+using MindDuck.Rules.Interfaces;
+using MindDuck.Rules.Fakes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +21,14 @@ builder.Services.AddScoped<ICardRepository, PostgreSqlCardRepository>();
 builder.Services.AddScoped<IMatchRepository, PostgreSqlMatchRepository>();
 builder.Services.AddScoped<IPlayerRepository, PostgreSqlPlayerRepository>();
 
+builder.Services.AddSingleton<IGameEngine, FakeGameEngine>();
+
 builder.Services.AddSingleton<RoomManager>();
 builder.Services.AddSingleton<MatchManager>();
-builder.Services.AddTransient<GameWebSocketHandler>();
+builder.Services.AddSingleton<GameStateViewBuilder>();
+builder.Services.AddSingleton<SocketMessageSender>();
+builder.Services.AddSingleton<IGameService, GameService>();
+builder.Services.AddSingleton<GameWebSocketHandler>();
 
 var app = builder.Build();
 
