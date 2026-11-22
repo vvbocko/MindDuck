@@ -1,6 +1,7 @@
 using MindDuck.Server.Models;
 using MindDuck.Contracts;
 using MindDuck.Server.Services;
+using MindDuck.Persistence;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -9,10 +10,12 @@ namespace MindDuck.Server.WebSockets
 {
     public class GameWebSocketHandler{
         private readonly RoomManager _roomManager;
+        private readonly IPlayerRepository _playerRepository;
 
-        public GameWebSocketHandler(RoomManager roomManager)
+        public GameWebSocketHandler(RoomManager roomManager, IPlayerRepository playerRepository)
         {
             _roomManager = roomManager;
+            _playerRepository = playerRepository;
         }
 
         public async Task HandleAsync(WebSocket webSocket)
@@ -67,9 +70,21 @@ namespace MindDuck.Server.WebSockets
                 return;
             }
 
+            await targetRoom.JoinLock.WaitAsync();
             try
             {
-                var assignedSeat = targetRoom.AddPlayer(playerNickname, out string generatedToken);
+                if (targetRoom.IsRoomFull)
+                {
+                    await SendMessageAsync(webSocket, new Error
+                    {
+                        Code = ErrorCode.RoomFull,
+                        Message = "Room is full."
+                    });
+                    return;
+                }
+
+                var player = await _playerRepository.CreatePlayerAsync(playerNickname);
+                var assignedSeat = targetRoom.AddPlayer(player.Name, player.Id, out string generatedToken);
 
                 string? opponentName = null;
                 if (assignedSeat == PlayerSeat.P2)
@@ -87,16 +102,10 @@ namespace MindDuck.Server.WebSockets
                 await SendMessageAsync(webSocket, roomJoinedMessage);
                 await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Zakończono dołączanie", CancellationToken.None);
             }
-            catch (Exception ex)
+            finally
             {
-                var fullRoomError = new Error
-                {
-                    Code = ErrorCode.RoomFull,
-                    Message = ex.Message
-                };
-                await SendMessageAsync(webSocket, fullRoomError);
+                targetRoom.JoinLock.Release();
             }
-            await Task.Delay(500);
         }
 
         // metoda pomocnicza żeby zapakować i wysłać wiadomość

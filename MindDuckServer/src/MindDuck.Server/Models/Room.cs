@@ -1,5 +1,6 @@
 using MindDuck.Contracts;
 using System.Net.WebSockets;
+using System.Threading;
 using MindDuck.Rules.Models;
 
 namespace MindDuck.Server.Models
@@ -9,6 +10,7 @@ namespace MindDuck.Server.Models
         private int _sequence;
         public string RoomCode { get; }
         public RoomStatus Status {get; private set; } = RoomStatus.WaitingForPlayers;
+        public SemaphoreSlim JoinLock { get; } = new(1, 1);
 
         public string? Player1Nickname { get; private set; }
         public string? Player2Nickname { get; private set; }
@@ -33,7 +35,7 @@ namespace MindDuck.Server.Models
 
         public int NextSequence() => Interlocked.Increment(ref _sequence);
 
-        public PlayerSeat AddPlayer(string nickname, out string playerToken)
+        public PlayerSeat AddPlayer(string nickname, int playerId, out string playerToken)
         {
             if (IsRoomFull)
             {
@@ -46,11 +48,13 @@ namespace MindDuck.Server.Models
             {
                 Player1Nickname = nickname;
                 Player1Token = playerToken;
+                Player1 = new Player(playerId, nickname);
                 return PlayerSeat.P1;
             }
 
             Player2Nickname = nickname;
             Player2Token = playerToken;
+            Player2 = new Player(playerId, nickname);
             Status = RoomStatus.InProgress;
             return PlayerSeat.P2;
         }
