@@ -28,7 +28,7 @@ namespace MindDuck.Client.Networking
         // ---- Client -> Server ----------------------------------------------------------
 
         /// <summary>Open the connection. "Task" = it finishes later; use "await".</summary>
-        Task ConnectAsync(string url);
+        void ConnectAsync(string url, string port);
 
         void JoinRoom(string roomCode, string nickname);
         void Rejoin(string roomCode, string playerToken);
@@ -41,6 +41,9 @@ namespace MindDuck.Client.Networking
 
         /// <summary>You are in the room. Keep PlayerToken for Rejoin.</summary>
         event Action<RoomJoined> RoomJoined;
+
+        /// <summary>Both players are in; the game has been set up and started.</summary>
+        event Action<MatchStarted> MatchStarted;
 
         /// <summary>The complete game as YOU may see it. The game screen redraws from it.</summary>
         event Action<StateUpdate> StateUpdated;
