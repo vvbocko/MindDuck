@@ -1,6 +1,7 @@
 using MindDuck.Server.Models;
 using MindDuck.Contracts;
 using MindDuck.Server.Services;
+using MindDuck.Persistence;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -8,6 +9,7 @@ using MindDuck.Rules.Interfaces;
 using MindDuck.Rules;
 using MindDuck.Rules.Models;
 using MindDuck.Rules.Commands;
+using Player = MindDuck.Rules.Models.Player;
 
 namespace MindDuck.Server.WebSockets
 {
@@ -17,14 +19,16 @@ namespace MindDuck.Server.WebSockets
         private readonly MatchManager _matchManager;
         private readonly GameStateViewBuilder _viewBuilder;
         private readonly SocketMessageSender _messageSender;
+        private readonly IPlayerRepository _playerRepository;
 
-        public GameWebSocketHandler(RoomManager roomManager, IGameService gameService, MatchManager matchManager, GameStateViewBuilder viewBuilder, SocketMessageSender messageSender) 
+        public GameWebSocketHandler(RoomManager roomManager, IGameService gameService, MatchManager matchManager, GameStateViewBuilder viewBuilder, SocketMessageSender messageSender, IPlayerRepository playerRepository) 
         {
             _roomManager = roomManager;
             _gameService = gameService;
             _matchManager = matchManager;
             _viewBuilder = viewBuilder;
             _messageSender = messageSender;
+            _playerRepository = playerRepository;
         }
 
         public async Task HandleAsync(WebSocket webSocket)
@@ -39,8 +43,7 @@ namespace MindDuck.Server.WebSockets
                 try
                 {
                     // odbieram wiadomość od klienta
-                    receiveResult = await webSocket.ReceiveAsync(
-                        new ArraySegment<byte>(buffer), CancellationToken.None);
+                    receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 }
                 catch (WebSocketException)
                 {
@@ -160,29 +163,36 @@ namespace MindDuck.Server.WebSockets
             PlayerSeat assignedSeat;
             string generatedToken;
 
+            await targetRoom.JoinLock.WaitAsync();
             try
             {
-                assignedSeat = targetRoom.AddPlayer(joinData.Nickname, out generatedToken);
-            }
-            catch (InvalidOperationException ex)
-            {
-                await _messageSender.SendAsync(webSocket, new Error
+                if (targetRoom.IsRoomFull)
                 {
-                    Code = ErrorCode.RoomFull,
-                    Message = ex.Message
-                });
-                return null;
-            }
+                    await _messageSender.SendAsync(webSocket, new Error
+                    {
+                        Code = ErrorCode.RoomFull,
+                        Message = "Room is full."
+                    });
+                    return null;
+                }
 
-            if (assignedSeat == PlayerSeat.P1)
-            {
-                targetRoom.Player1Socket = webSocket;
-                targetRoom.Player1 = new Player(1, joinData.Nickname);
+                var player = await _playerRepository.CreatePlayerAsync(joinData.Nickname);
+                assignedSeat = targetRoom.AddPlayer(player.Name, player.Id, out generatedToken);
+
+                if (assignedSeat == PlayerSeat.P1)
+                {
+                    targetRoom.Player1Socket = webSocket;
+                    targetRoom.Player1 = new Player(player.Id, player.Name);
+                }
+                else
+                {
+                    targetRoom.Player2Socket = webSocket;
+                    targetRoom.Player2 = new Player(player.Id, player.Name);
+                }
             }
-            else
+            finally
             {
-                targetRoom.Player2Socket = webSocket;
-                targetRoom.Player2 = new Player(2, joinData.Nickname);
+                targetRoom.JoinLock.Release();
             }
 
             await _messageSender.SendAsync(webSocket, new RoomJoined
@@ -216,7 +226,6 @@ namespace MindDuck.Server.WebSockets
                 await SendGameStateAsync(targetRoom, match);
             }
             return (targetRoom, assignedSeat);
-
         }
 
         private async Task HandleGameMessageAsync(WebSocket webSocket, Room room, PlayerSeat seat, string messageType, object? rawPayload)
@@ -310,3 +319,43 @@ namespace MindDuck.Server.WebSockets
 }
 
             
+
+
+/*
+await targetRoom.JoinLock.WaitAsync();
+            try
+            {
+                if (targetRoom.IsRoomFull)
+                {
+                    await SendMessageAsync(webSocket, new Error
+                    {
+                        Code = ErrorCode.RoomFull,
+                        Message = "Room is full."
+                    });
+                    return;
+                }
+
+                var player = await _playerRepository.CreatePlayerAsync(playerNickname);
+                var assignedSeat = targetRoom.AddPlayer(player.Name, player.Id, out string generatedToken);
+
+                string? opponentName = null;
+                if (assignedSeat == PlayerSeat.P2)
+                {
+                    opponentName = targetRoom.Player1Nickname;
+                }
+
+                var roomJoinedMessage = new RoomJoined
+                {
+                    RoomCode = targetRoom.RoomCode,
+                    Seat = assignedSeat,
+                    PlayerToken = generatedToken,
+                    OpponentNickname = opponentName
+                };
+                await SendMessageAsync(webSocket, roomJoinedMessage);
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Zakończono dołączanie", CancellationToken.None);
+            }
+            finally
+            {
+                targetRoom.JoinLock.Release();
+            }
+*/

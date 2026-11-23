@@ -7,9 +7,20 @@ A University group project - 2D Unity multiplayer card game
 ```bash
 read -rsp "PostgreSQL password: " DB_PASSWORD
 printf '\n'
-export ConnectionStrings__MindDuck="Host=localhost;Port=5432;Database=mindduck;Username=postgres;Password=${DB_PASSWORD}"
+export ConnectionStrings__MindDuck="Host=localhost;Port=5433;Database=mindduck;Username=mindduck;Password=${DB_PASSWORD}"
 unset DB_PASSWORD
 dotnet run --project MindDuckServer/src/MindDuck.Server/MindDuck.Server.csproj
 ```
 
-This requires the .NET 11 SDK and a PostgreSQL server reachable at `localhost:5432`.
+This requires the .NET 11 SDK and the Compose PostgreSQL service reachable at `localhost:5433`.
+
+## Temporary players
+
+For an existing Docker database, enable generated player IDs once:
+
+```bash
+sudo docker compose exec -T db psql -v ON_ERROR_STOP=1 -U mindduck -d mindduck \
+  < db/migrations/20261122_player_identity.sql
+```
+
+Each successful room join creates a new player row. The generated ID is kept in the room for the current server process; player tokens and match records are not stored by this flow.

@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mindduck
+      POSTGRES_USER: mindduck
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ustaw POSTGRES_PASSWORD w pliku .env}
+    ports:
+      - "${DB_BIND_IP:?Ustaw DB_BIND_IP na adresie hosta}:${DB_PORT:-5433}:5432"
+    volumes:
+      - mindduck_data:/var/lib/postgresql/data
+      - ./db/base/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mindduck -d mindduck"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mindduck_data:

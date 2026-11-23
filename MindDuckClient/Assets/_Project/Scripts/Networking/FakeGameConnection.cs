@@ -33,6 +33,7 @@ namespace MindDuck.Client.Networking
         // "warning CS0067: The event ... is never used". Harmless.
 #pragma warning disable CS0067
         public event Action<RoomJoined> RoomJoined;
+        public event Action<MatchStarted> MatchStarted;
         public event Action<StateUpdate> StateUpdated;
         public event Action<DecisionRequired> DecisionRequired;
         public event Action<ActionRejected> ActionRejected;
@@ -69,10 +70,9 @@ namespace MindDuck.Client.Networking
 
         // ---- Client -> "Server" -----------------------------------------------------------
 
-        public Task ConnectAsync(string url)
+        public void ConnectAsync(string url, string port)
         {
             Debug.Log($"[FakeGameConnection] Pretending to connect to {url}");
-            return Task.CompletedTask; // "already finished", nothing to wait for
         }
 
         public void JoinRoom(string roomCode, string nickname)
