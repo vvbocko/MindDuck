@@ -33,6 +33,8 @@ public class CardAbility
 public class MatchResult
 {
     public string MatchId { get; set; }
+    public int? Player1Id { get; set; }
+    public int? Player2Id { get; set; }
     public string? Winner { get; set; }
 }
 

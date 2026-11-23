@@ -27,16 +27,26 @@ CREATE TABLE IF NOT EXISTS players (
 
 CREATE TABLE IF NOT EXISTS matches (
     match_id text PRIMARY KEY,
+    player1_id integer NOT NULL REFERENCES players (id),
+    player2_id integer NOT NULL REFERENCES players (id),
     winner text,
     started_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    finished_at timestamptz
+    finished_at timestamptz,
+    CONSTRAINT matches_distinct_players_check CHECK (player1_id <> player2_id)
 );
+
+CREATE INDEX IF NOT EXISTS matches_player1_id_idx ON matches (player1_id);
+CREATE INDEX IF NOT EXISTS matches_player2_id_idx ON matches (player2_id);
 
 CREATE TABLE IF NOT EXISTS match_events (
     event_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     match_id text NOT NULL REFERENCES matches (match_id) ON DELETE CASCADE,
+    actor_player_id integer NOT NULL REFERENCES players (id),
     event text NOT NULL
 );
+
+CREATE INDEX IF NOT EXISTS match_events_actor_player_id_idx
+    ON match_events (actor_player_id);
 
 CREATE INDEX IF NOT EXISTS matches_finished_at_idx
     ON matches (finished_at DESC, match_id)

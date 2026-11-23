@@ -14,18 +14,26 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
         => _dataSource = dataSource;
 
 
-    public async Task CreateMatchAsync(string matchId, CancellationToken cancellationToken = default)
+    public async Task CreateMatchAsync(
+        string matchId,
+        int player1Id,
+        int player2Id,
+        CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            "INSERT INTO matches (match_id) VALUES (@match_id)",
+            "INSERT INTO matches (match_id, player1_id, player2_id) " +
+            "VALUES (@match_id, @player1_id, @player2_id)",
             connection);
         command.Parameters.AddWithValue("match_id", matchId);
+        command.Parameters.AddWithValue("player1_id", player1Id);
+        command.Parameters.AddWithValue("player2_id", player2Id);
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task AppendEventsAsync(
         string matchId,
+        int actorPlayerId,
         List<string> events,
         CancellationToken cancellationToken = default)
     {
@@ -34,13 +42,15 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            "INSERT INTO match_events (match_id, event) VALUES (@match_id, @event)",
+            "INSERT INTO match_events (match_id, actor_player_id, event) " +
+            "VALUES (@match_id, @actor_player_id, @event)",
             connection,
             transaction);
         var matchIdParameter = command.Parameters.Add("match_id", NpgsqlTypes.NpgsqlDbType.Text);
+        var actorPlayerIdParameter = command.Parameters.Add("actor_player_id", NpgsqlTypes.NpgsqlDbType.Integer);
         var eventParameter = command.Parameters.Add("event", NpgsqlTypes.NpgsqlDbType.Text);
         matchIdParameter.Value = matchId;
-
+        actorPlayerIdParameter.Value = actorPlayerId;
         foreach (var matchEvent in events)
         {
             eventParameter.Value = matchEvent;
@@ -77,7 +87,9 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            "SELECT match_id, winner FROM matches WHERE finished_at IS NOT NULL ORDER BY finished_at DESC, match_id LIMIT @limit",
+            "SELECT match_id, player1_id, player2_id, winner " +
+            "FROM matches WHERE finished_at IS NOT NULL " +
+            "ORDER BY finished_at DESC, match_id LIMIT @limit",
             connection);
         command.Parameters.AddWithValue("limit", limit);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -88,7 +100,9 @@ public sealed class PostgreSqlMatchRepository : IMatchRepository
             matches.Add(new MatchResult
             {
                 MatchId = reader.GetString(0),
-                Winner = reader.IsDBNull(1) ? null : reader.GetString(1)
+                Player1Id = reader.IsDBNull(1) ? null : reader.GetInt32(1),
+                Player2Id = reader.IsDBNull(2) ? null : reader.GetInt32(2),
+                Winner = reader.IsDBNull(3) ? null : reader.GetString(3)
             });
         }
 

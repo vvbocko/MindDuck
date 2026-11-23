@@ -218,7 +218,10 @@ namespace MindDuck.Server.WebSockets
                 bool matchSaved = false;
                 try
                 {
-                    await _matchRepository.CreateMatchAsync(match.MatchId.ToString());
+                    await _matchRepository.CreateMatchAsync(
+                        match.MatchId.ToString(),
+                        targetRoom.Player1.Id,
+                        targetRoom.Player2.Id);
                     matchSaved = true;
                 }
                 finally
@@ -310,6 +313,17 @@ namespace MindDuck.Server.WebSockets
                 });
                 return;
             }
+
+            JsonElement commandPayload = JsonSerializer.SerializeToElement(
+                command,
+                command.GetType(),
+                SocketMessageSender.JsonOptions);
+            string matchEvent = JsonSerializer.Serialize(new
+            {
+                type = command.GetType().Name,
+                payload = commandPayload
+            }, SocketMessageSender.JsonOptions);
+            await _matchRepository.AppendEventsAsync(room.MatchId.Value.ToString(), actingPlayer.Id, new List<string> { matchEvent });
 
             var match = _matchManager.GetMatch(room.MatchId.Value);
             await SendGameStateAsync(room, match);

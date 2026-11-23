@@ -6,10 +6,18 @@ namespace MindDuck.Persistence;
 public interface IMatchRepository
 {
     // tworzy nowy wpis gry w bazie
-    Task CreateMatchAsync(string matchId, CancellationToken cancellationToken = default);
+    Task CreateMatchAsync(
+        string matchId,
+        int player1Id,
+        int player2Id,
+        CancellationToken cancellationToken = default);
 
     // dopisuje ruchy z przebiegu gry
-    Task AppendEventsAsync(string matchId, List<string> events, CancellationToken cancellationToken = default);
+    Task AppendEventsAsync(
+        string matchId,
+        int actorPlayerId,
+        List<string> events,
+        CancellationToken cancellationToken = default);
 
     // zapisuje wynik/zwycięzcę gry
     Task FinishMatchAsync(string matchId, string winner, CancellationToken cancellationToken = default);

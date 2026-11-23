@@ -101,6 +101,15 @@ class Program
 
         Console.WriteLine($"Oczekiwano: {expectedResponse}, otrzymano: {actualResponse}");
 
+        Console.WriteLine("\n6. Test poprawnego zagrania karty");
+        await SendEnvelopeAsync(playerP1, new PlayCard { CardInstanceId = 1 });
+
+        Envelope? p1Update = await ReceiveEnvelopeAsync(playerP1);
+        Envelope? p2Update = await ReceiveEnvelopeAsync(playerP2);
+
+        Console.WriteLine($"P1 otrzymał: {p1Update?.Type ?? "null"}");
+        Console.WriteLine($"P2 otrzymał: {p2Update?.Type ?? "null"}");
+
         await playerP1.CloseAsync(WebSocketCloseStatus.NormalClosure, "koniec", CancellationToken.None);
         await playerP2.CloseAsync(WebSocketCloseStatus.NormalClosure, "koniec", CancellationToken.None);
     }
