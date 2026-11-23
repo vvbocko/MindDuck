@@ -5,6 +5,8 @@ using MindDuck.Rules.Commands;
 using MindDuck.Rules.Interfaces;
 using MindDuck.Rules.Models;
 using MindDuck.Rules.Results;
+using MindDuck.Rules.Effects;
+using System.Data;
 
 namespace MindDuck.Rules;
 
@@ -196,7 +198,16 @@ public sealed class GameEngine : IGameEngine
 
         attacker.RegisterAttack(state.Turn);
 
-        // TODO: Implement Attack effect
+        CardEffectResolver.Resolve(state, player, attacker, CardEffectTrigger.Attack);
+
+        if (CheckGameOver(state))
+            return ApplyResult.Success(state);
+
+        if (player.Board.FindByInstanceId(attacker.InstanceId) is null)
+        {
+            CompleteAttack(state, player, attacker);
+            return ApplyResult.Success(state);
+        }
 
         List<Card> possibleBlockers = GetEligibleBlockers(attacker, opponent, forcedDefenderId).ToList();
 
@@ -251,7 +262,7 @@ public sealed class GameEngine : IGameEngine
         if (!canBlock)
             return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "This creature cannot block the attack.");
 
-        ResolveCombat(pending.RequestingPlayer, player, attacker, defender);
+        ResolveCombat(state, pending.RequestingPlayer, player, attacker, defender);
 
         state.PendingDecision = null;
         state.Phase = GamePhase.Main;
@@ -283,16 +294,16 @@ public sealed class GameEngine : IGameEngine
         card.PrepareForPlay(state.Turn);
         player.Board.Add(card);
 
-        // TODO: implemet Play effect
+        CardEffectResolver.Resolve(state, player, card, CardEffectTrigger.Play);
     }
 
-    private static void ResolveCombat(Player attackerPlayer, Player defenderPlayer, Card attacker, Card defender)
+    private static void ResolveCombat(GameState state, Player attackerPlayer, Player defenderPlayer, Card attacker, Card defender)
     {
         CombatResult result = CombatRules.Resolve(attacker, defender);
 
         if (result.AttackerDefeated)
         {
-            // TODO: Implement Defeated effect for attacker
+            CardEffectResolver.Resolve(state, attackerPlayer, attacker, CardEffectTrigger.Defeated);
 
             attackerPlayer.Board.Remove(attacker);
             attackerPlayer.DiscardPile.Add(attacker);
@@ -300,7 +311,7 @@ public sealed class GameEngine : IGameEngine
 
         if (result.DefenderDefeated)
         {       
-            // TODO: Implement Defeated effect for defender
+            CardEffectResolver.Resolve(state, defenderPlayer, defender, CardEffectTrigger.Defeated);
 
             defenderPlayer.Board.Remove(defender);
             defenderPlayer.DiscardPile.Add(defender);
