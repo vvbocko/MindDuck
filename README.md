@@ -23,4 +23,4 @@ sudo docker compose exec -T db psql -v ON_ERROR_STOP=1 -U mindduck -d mindduck \
   < db/migrations/20261122_player_identity.sql
 ```
 
-Each successful room join creates a new player row. The generated ID is kept in the room for the current server process; player tokens and match records are not stored by this flow.
+Each successful room join creates a new player row. The generated ID is kept in the room for the current server process. A match row is created when the second player joins. The current game-end flow does not yet update its winner or `finished_at`.

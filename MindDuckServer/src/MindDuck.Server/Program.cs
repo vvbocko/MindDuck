@@ -28,7 +28,7 @@ builder.Services.AddSingleton<MatchManager>();
 builder.Services.AddSingleton<GameStateViewBuilder>();
 builder.Services.AddSingleton<SocketMessageSender>();
 builder.Services.AddSingleton<IGameService, GameService>();
-builder.Services.AddSingleton<GameWebSocketHandler>();
+builder.Services.AddTransient<GameWebSocketHandler>();
 
 var app = builder.Build();
 

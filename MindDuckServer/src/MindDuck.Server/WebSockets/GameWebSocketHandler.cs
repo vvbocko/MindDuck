@@ -20,8 +20,16 @@ namespace MindDuck.Server.WebSockets
         private readonly GameStateViewBuilder _viewBuilder;
         private readonly SocketMessageSender _messageSender;
         private readonly IPlayerRepository _playerRepository;
+        private readonly IMatchRepository _matchRepository;
 
-        public GameWebSocketHandler(RoomManager roomManager, IGameService gameService, MatchManager matchManager, GameStateViewBuilder viewBuilder, SocketMessageSender messageSender, IPlayerRepository playerRepository) 
+        public GameWebSocketHandler(
+            RoomManager roomManager,
+            IGameService gameService,
+            MatchManager matchManager,
+            GameStateViewBuilder viewBuilder,
+            SocketMessageSender messageSender,
+            IPlayerRepository playerRepository,
+            IMatchRepository matchRepository)
         {
             _roomManager = roomManager;
             _gameService = gameService;
@@ -29,6 +37,7 @@ namespace MindDuck.Server.WebSockets
             _viewBuilder = viewBuilder;
             _messageSender = messageSender;
             _playerRepository = playerRepository;
+            _matchRepository = matchRepository;
         }
 
         public async Task HandleAsync(WebSocket webSocket)
@@ -206,6 +215,20 @@ namespace MindDuck.Server.WebSockets
             if (targetRoom.IsRoomFull && targetRoom.Player1 != null && targetRoom.Player2 != null && targetRoom.MatchId == null)
             {
                 var match = _gameService.StartMatch(targetRoom.Player1, targetRoom.Player2);
+                bool matchSaved = false;
+                try
+                {
+                    await _matchRepository.CreateMatchAsync(match.MatchId.ToString());
+                    matchSaved = true;
+                }
+                finally
+                {
+                    if (!matchSaved)
+                    {
+                        _matchManager.RemoveMatch(match.MatchId);
+                    }
+                }
+
                 targetRoom.MatchId = match.MatchId;
 
                 var matchStarted = new MatchStarted
