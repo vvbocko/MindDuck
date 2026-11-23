@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
+using MindDuck.Rules.Interfaces;
 
 namespace MindDuck.Rules.Models;
 
 public sealed class CardDefinition
 {
     private readonly HashSet<Keyword> _keywords;
+    private readonly IReadOnlyList<ICardEffect> _effects;
 
     public string Id { get; }
     public string Name { get; }
     public int Power { get; }
 
     public IReadOnlyCollection<Keyword> Keywords => _keywords;
+    public IReadOnlyList<ICardEffect> Effects => _effects;
 
-    public CardDefinition(string id, string name, int power, IEnumerable<Keyword>? keywords = null)
+    public CardDefinition(string id, string name, int power, IEnumerable<Keyword>? keywords = null, IEnumerable<ICardEffect>? effects = null)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Card ID cannot be empty.", nameof(id));
@@ -31,6 +34,8 @@ public sealed class CardDefinition
         _keywords = keywords != null
             ? new HashSet<Keyword>(keywords)
             : new HashSet<Keyword>();
+
+        _effects = new List<ICardEffect>(effects ?? Array.Empty<ICardEffect>()).AsReadOnly();
     }
 
     public bool HasKeyword(Keyword keyword)
