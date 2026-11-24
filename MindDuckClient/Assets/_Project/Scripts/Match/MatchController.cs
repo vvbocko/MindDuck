@@ -1,3 +1,5 @@
+using MindDuck.Client.Cards;
+using MindDuck.Client.Networking;
 using MindDuck.Contracts;
 using System.Collections.Generic;
 using TMPro;
@@ -21,6 +23,45 @@ namespace MindDuck.Client.Match
         [SerializeField] private TMP_Text statusText;
 
         private GameStateView gameState;
+
+        private IGameConnection _connection;
+        private GameStateView _state;
+        private int _lastSequence = -1;
+
+        public void Initialize(IGameConnection connection, ICardCatalog catalog)
+        {
+            _connection = connection;
+
+            yourHand.Initialize(catalog);
+            yourBoard.Initialize(catalog);
+            opponentHand.Initialize(catalog);
+            opponentBoard.Initialize(catalog);
+
+            yourHand.CardClicked += OnYourHandCardClicked;
+            yourBoard.CreatureClicked += OnYourCreatureClicked;
+            opponentBoard.CreatureClicked += OnOpponentCreatureClicked;
+
+            _connection.StateUpdated += OnStateUpdated;
+            _connection.DecisionRequired += OnDecisionRequired;
+            _connection.ActionRejected += OnActionRejected;
+            _connection.OpponentConnectionChanged += OnOpponentConnectionChanged;
+            _connection.MatchEnded += OnMatchEnded;
+            _connection.ConnectionLost += OnConnectionLost;
+
+            statusText.text = "Connecting...";
+        }
+
+        private void OnDestroy()
+        {
+            if (_connection == null) return;
+
+            _connection.StateUpdated -= OnStateUpdated;
+            _connection.DecisionRequired -= OnDecisionRequired;
+            _connection.ActionRejected -= OnActionRejected;
+            _connection.OpponentConnectionChanged -= OnOpponentConnectionChanged;
+            _connection.MatchEnded -= OnMatchEnded;
+            _connection.ConnectionLost -= OnConnectionLost;
+        }
 
         private void OnStateUpdated(StateUpdate update)
         {
