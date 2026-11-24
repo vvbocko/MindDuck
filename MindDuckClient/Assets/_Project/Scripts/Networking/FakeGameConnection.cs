@@ -32,6 +32,7 @@ namespace MindDuck.Client.Networking
         // Some events are never raised by this fake. Without this line Unity shows
         // "warning CS0067: The event ... is never used". Harmless.
 #pragma warning disable CS0067
+        public event Action ConnectionEstablished;
         public event Action<RoomJoined> RoomJoined;
         public event Action<MatchStarted> MatchStarted;
         public event Action<StateUpdate> StateUpdated;
@@ -40,6 +41,7 @@ namespace MindDuck.Client.Networking
         public event Action<bool, int> OpponentConnectionChanged;
         public event Action<MatchEnded> MatchEnded;
         public event Action ConnectionLost;
+        public event Action<Error> Error;
 #pragma warning restore CS0067
 
         private const int HandSize = 5;

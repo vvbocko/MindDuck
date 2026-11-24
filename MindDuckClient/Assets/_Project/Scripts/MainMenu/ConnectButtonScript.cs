@@ -8,11 +8,16 @@ public class ConnectButtonScript : MonoBehaviour
 {
     public TMP_InputField url;
     public TMP_InputField port;
+    private WebSocketGameConnection ws = new WebSocketGameConnection();
 
     public void ConnectButton()
     {
-        WebSocketGameConnection ws = new WebSocketGameConnection();
         ws.ConnectAsync(url.text, port.text);
+    }
+
+    public WebSocketGameConnection getWS()
+    {
+        return ws;
     }
 
 

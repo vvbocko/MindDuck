@@ -16,6 +16,18 @@
 //   - methods = what the CLIENT tells the server; each becomes one WebSocket message (protocol.md 4)
 //   - events  = what the SERVER tells the client; raised when a message arrives (protocol.md 5).
 //     "event Action<T>" = a list of methods that get called with a T when the event is raised.
+//
+// HOW TO USE
+//   - methods : call the method whenever coresponding action is commited
+//   - events  : add handler to object that should akt on server's message
+//
+//               
+//
+//               void Start() {
+//                   
+//               }
+//
+
 
 using System;
 using System.Threading.Tasks;
@@ -27,7 +39,7 @@ namespace MindDuck.Client.Networking
     {
         // ---- Client -> Server ----------------------------------------------------------
 
-        /// <summary>Open the connection. "Task" = it finishes later; use "await".</summary>
+        /// <summary>Open the connection.</summary>
         void ConnectAsync(string url, string port);
 
         void JoinRoom(string roomCode, string nickname);
@@ -38,6 +50,9 @@ namespace MindDuck.Client.Networking
         void LeaveRoom();
 
         // ---- Server -> Client ----------------------------------------------------------
+
+        /// <summary>Established a websocket connection with the server</summary>
+        event Action ConnectionEstablished;
 
         /// <summary>You are in the room. Keep PlayerToken for Rejoin.</summary>
         event Action<RoomJoined> RoomJoined;
@@ -61,5 +76,8 @@ namespace MindDuck.Client.Networking
 
         /// <summary>OUR connection to the server broke.</summary>
         event Action ConnectionLost;
+
+        /// <summary>Problem outside a move: unknown room, room full, bad nickname, bad JSON</summary>
+        event Action<Error> Error;
     }
 }
