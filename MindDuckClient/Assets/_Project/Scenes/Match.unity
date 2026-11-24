@@ -393,6 +393,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 149407051}
   m_CullTransparentMesh: 1
+--- !u!1 &232010665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232010666}
+  - component: {fileID: 232010667}
+  m_Layer: 0
+  m_Name: GameBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &232010666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232010665}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1036.2351, y: 497.83408, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &232010667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232010665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 356c9678d42f6314391b64a38425b24d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MindDuck.Client.Core.GameBootstrap
+  useFakeServer: 1
+  serverUrl: ws://localhost:5000/ws
+  roomCode: TEST
+  nickname: Player
+  matchController: {fileID: 558163852}
 --- !u!1 &285740057
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,6 +808,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &558163851
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 558163853}
+  - component: {fileID: 558163852}
+  m_Layer: 0
+  m_Name: MatchController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &558163852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558163851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27d8af95753e3694780390f702991e81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MindDuck.Client.Match.MatchController
+  yourInfo: {fileID: 899161245}
+  yourHand: {fileID: 633215210}
+  yourBoard: {fileID: 883778879}
+  opponentInfo: {fileID: 930507419}
+  opponentHand: {fileID: 1404699208}
+  opponentBoard: {fileID: 2127568449}
+  statusText: {fileID: 1607377060}
+--- !u!4 &558163853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558163851}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 915.8874, y: 625.6264, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &621831611
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,9 +996,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0553772b23fcb34ab59d515580dc6ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MindDuck.Client.Match.HandView
-  cardPrefab: {fileID: 0}
-  cardBackPrefab: {fileID: 0}
-  layoutContainer: {fileID: 0}
+  cardPrefab: {fileID: 5302558638626037771, guid: 690957f8a3b66234585fb7055d842bac, type: 3}
+  cardBackPrefab: {fileID: 6196673592267421851, guid: 1ef1f9c3815e89e488eadc4183d5ed88, type: 3}
+  layoutContainer: {fileID: 633215209}
 --- !u!114 &633215211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1271,8 +1371,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b375d354fee02f345a7736b3e68b43c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardView
-  creaturePrefab: {fileID: 0}
-  layoutContainer: {fileID: 0}
+  creaturePrefab: {fileID: 9145595566453615095, guid: 18f6a4a3a4001304aad51d1b2a803694, type: 3}
+  layoutContainer: {fileID: 883778878}
 --- !u!114 &883778880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1879,9 +1979,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0553772b23fcb34ab59d515580dc6ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MindDuck.Client.Match.HandView
-  cardPrefab: {fileID: 0}
-  cardBackPrefab: {fileID: 0}
-  layoutContainer: {fileID: 0}
+  cardPrefab: {fileID: 5302558638626037771, guid: 690957f8a3b66234585fb7055d842bac, type: 3}
+  cardBackPrefab: {fileID: 6196673592267421851, guid: 1ef1f9c3815e89e488eadc4183d5ed88, type: 3}
+  layoutContainer: {fileID: 1404699207}
 --- !u!114 &1404699209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2888,8 +2988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b375d354fee02f345a7736b3e68b43c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardView
-  creaturePrefab: {fileID: 0}
-  layoutContainer: {fileID: 0}
+  creaturePrefab: {fileID: 9145595566453615095, guid: 18f6a4a3a4001304aad51d1b2a803694, type: 3}
+  layoutContainer: {fileID: 2127568448}
 --- !u!114 &2127568450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2945,3 +3045,5 @@ SceneRoots:
   - {fileID: 464397236}
   - {fileID: 1755735989}
   - {fileID: 1726544625}
+  - {fileID: 558163853}
+  - {fileID: 232010666}
