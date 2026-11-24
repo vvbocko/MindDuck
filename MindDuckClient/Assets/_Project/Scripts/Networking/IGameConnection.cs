@@ -40,7 +40,7 @@ namespace MindDuck.Client.Networking
         // ---- Client -> Server ----------------------------------------------------------
 
         /// <summary>Open the connection.</summary>
-        void ConnectAsync(string url, string port);
+        Task ConnectAsync(string url);
 
         void JoinRoom(string roomCode, string nickname);
         void Rejoin(string roomCode, string playerToken);
@@ -50,9 +50,6 @@ namespace MindDuck.Client.Networking
         void LeaveRoom();
 
         // ---- Server -> Client ----------------------------------------------------------
-
-        /// <summary>Established a websocket connection with the server</summary>
-        event Action ConnectionEstablished;
 
         /// <summary>You are in the room. Keep PlayerToken for Rejoin.</summary>
         event Action<RoomJoined> RoomJoined;

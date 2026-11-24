@@ -7,13 +7,11 @@ using UnityEngine;
 using NativeWebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Text.Json.Serialization;
 
 namespace MindDuck.Client.Networking
 {
     public sealed class WebSocketGameConnection : IGameConnection
     {
-                public event Action ConnectionEstablished;
                 public event Action<RoomJoined> RoomJoined;
                 public event Action<MatchStarted> MatchStarted;
                 public event Action<StateUpdate> StateUpdated;
@@ -26,14 +24,13 @@ namespace MindDuck.Client.Networking
 
         private WebSocket websocket;
 
-        public async void ConnectAsync(string url, string port)
+        public Task ConnectAsync(string url)
         {
 
-            websocket = new WebSocket($"ws://{url}:{port}");
+            websocket = new WebSocket($"ws://{url}");
 
             websocket.OnOpen += () => {
                 Debug.Log("Connection open!");
-                ConnectionEstablished.Invoke();
             };
             websocket.OnError += (e) => Debug.Log("Error! " + e);
             websocket.OnClose += (code) => {
@@ -92,7 +89,8 @@ namespace MindDuck.Client.Networking
                 }
             };
 
-            await websocket.Connect();
+            //await websocket.Connect();
+            return Task.CompletedTask;
         }
 
         public async void JoinRoom(string roomCode, string nickname)
