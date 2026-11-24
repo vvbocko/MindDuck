@@ -40,6 +40,7 @@ namespace MindDuck.Client.Networking
         public event Action<bool, int> OpponentConnectionChanged;
         public event Action<MatchEnded> MatchEnded;
         public event Action ConnectionLost;
+        public event Action<Error> Error;
 #pragma warning restore CS0067
 
         private const int HandSize = 5;
@@ -70,9 +71,10 @@ namespace MindDuck.Client.Networking
 
         // ---- Client -> "Server" -----------------------------------------------------------
 
-        public void ConnectAsync(string url, string port)
+        public Task ConnectAsync(string url)
         {
             Debug.Log($"[FakeGameConnection] Pretending to connect to {url}");
+            return Task.CompletedTask;
         }
 
         public void JoinRoom(string roomCode, string nickname)
