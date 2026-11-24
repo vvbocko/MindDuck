@@ -8,9 +8,9 @@ public class ApplyResult
 
     public string? ErrorMessage { get; }
 
-    public GameState UpdatedState { get; private set; }
+    public GameState? UpdatedState { get; }
 
-    private ApplyResult(bool isSuccess, ApplyErrorCode errorCode, string? errorMessage, GameState updatedState)
+    private ApplyResult(bool isSuccess, ApplyErrorCode errorCode, string? errorMessage, GameState? updatedState)
     {
         IsSuccess = isSuccess;
         ErrorCode = errorCode;

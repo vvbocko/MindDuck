@@ -107,7 +107,7 @@ public sealed class FakeGameEngine : IGameEngine
     {
         Player? me = FindPlayer(state, player);
 
-        if (me == null || state.Phase == GamePhase.Finished || state.ActivePlayerId != me.Id)
+        if (me == null || state.Phase != GamePhase.Main || state.ActivePlayerId != me.Id)
             return Array.Empty<GameCommand>();
 
         var actions = new List<GameCommand>();

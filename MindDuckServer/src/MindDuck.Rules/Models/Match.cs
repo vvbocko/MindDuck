@@ -6,7 +6,7 @@ public class Match
 {
     public Guid MatchId { get; set; }
 
-    public GameState GameState { get; set; }
+    public required GameState GameState { get; init; }
 
     public List<GameCommand> History { get; set; } = new();
 }

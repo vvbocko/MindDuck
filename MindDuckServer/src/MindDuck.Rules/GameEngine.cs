@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using MindDuck.Rules.Commands;
 using MindDuck.Rules.Interfaces;
 using MindDuck.Rules.Models;
@@ -61,22 +58,27 @@ public sealed class GameEngine : IGameEngine
         ArgumentNullException.ThrowIfNull(player);
         ArgumentNullException.ThrowIfNull(command);
 
-        if (!state.ContainsPlayer(player))
-            return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "Player does not belong to this game.");
+        Player? currentPlayer = FindPlayer(state, player);
+
+        if (currentPlayer is null) 
+            return ApplyResult.Failure(ApplyErrorCode.InvalidPlayer, $"Player {player.Id} does not belong to this game.");
 
         if (state.Phase == GamePhase.Finished)
-            return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "Game has already finished.");
+            return ApplyResult.Failure(ApplyErrorCode.InvalidGamePhase, "Game has already finished.");
 
         if (state.Phase == GamePhase.AwaitingDecision)
         {
             if (command is SubmitDecisionCommand decision)
                 return ApplyDecision(state, player, decision);
 
-            return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "A decision is waiting for a response.");
+            return ApplyResult.Failure(ApplyErrorCode.IllegalAction, "A decision is waiting for a response.");
         }
 
         if (state.ActivePlayerId != player.Id)
-            return ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "It is not your turn.");
+            return ApplyResult.Failure(ApplyErrorCode.NotPlayersTurn, $"It is not {currentPlayer.Name}'s turn.");
+
+        if (command is SubmitDecisionCommand) 
+            return ApplyResult.Failure(ApplyErrorCode.MissingDecision, "There is no pending decision.");
 
         if (state.FrenzyContinuationCardInstanceId is int frenzyId)
         {
@@ -84,7 +86,7 @@ public sealed class GameEngine : IGameEngine
             {
                 AttackCommand attack when attack.AttackerInstanceId == frenzyId => ApplyAttack(state, player, attack),
                 EndTurnCommand => SkipFrenzyAttack(state, player),
-                _ => ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "You must perform the additional Frenzy attack or end your turn.")
+                _ => ApplyResult.Failure(ApplyErrorCode.IllegalAction, "You must perform the additional Frenzy attack or end your turn.")
             };
         }
 
@@ -117,12 +119,16 @@ public sealed class GameEngine : IGameEngine
         }
 
         PutIntoPlay(state, player, card);
+
+        if(CheckGameOver(state))
+            return ApplyResult.Success(state);
+
         EndTurn(state, player);
 
         return ApplyResult.Success(state);
     }
 
-    private ApplyResult ApplyDecision(GameState state, Player player, SubmitDecisionCommand command)
+    private static ApplyResult ApplyDecision(GameState state, Player player, SubmitDecisionCommand command)
     {
         PendingDecision? pending = state.PendingDecision;
 
@@ -143,7 +149,7 @@ public sealed class GameEngine : IGameEngine
         };
     }
 
-    private ApplyResult ResolveMindDuck(GameState state, Player player, SubmitDecisionCommand command, PendingDecision pending)
+    private static ApplyResult ResolveMindDuck(GameState state, Player player, SubmitDecisionCommand command, PendingDecision pending)
     {
         if (command.Accepted)
         {
@@ -154,6 +160,10 @@ public sealed class GameEngine : IGameEngine
             PutIntoPlay(state, player, pending.Card);
 
             state.PendingDecision = null;
+
+            if (CheckGameOver(state))
+                return ApplyResult.Success(state);
+
             BeginTurn(state, pending.RequestingPlayer, player);
 
             return ApplyResult.Success(state);
@@ -162,6 +172,10 @@ public sealed class GameEngine : IGameEngine
         PutIntoPlay(state, pending.RequestingPlayer, pending.Card);
 
         state.PendingDecision = null;
+
+        if (CheckGameOver(state))
+                return ApplyResult.Success(state);
+
         EndTurn(state, pending.RequestingPlayer);
 
         return ApplyResult.Success(state);
@@ -228,7 +242,7 @@ public sealed class GameEngine : IGameEngine
         return ApplyResult.Success(state);
     }
 
-    private ApplyResult ResolveBlock(GameState state, Player player, SubmitDecisionCommand command, PendingDecision pending)
+    private static ApplyResult ResolveBlock(GameState state, Player player, SubmitDecisionCommand command, PendingDecision pending)
     {
         Card attacker = pending.Card;
 
@@ -403,36 +417,38 @@ public sealed class GameEngine : IGameEngine
 
     public IReadOnlyList<GameCommand> GetLegalActions(GameState state, Player player)
     {
-        if (!state.ContainsPlayer(player) || state.Phase == GamePhase.Finished)
+        Player? currentPlayer = FindPlayer(state, player);
+
+        if (currentPlayer is null || state.Phase == GamePhase.Finished)
             return Array.Empty<GameCommand>();
 
         if (state.Phase == GamePhase.AwaitingDecision)
-            return GetDecisionActions(state, player);
+            return GetDecisionActions(state, currentPlayer);
 
-        if (state.Phase != GamePhase.Main || state.ActivePlayerId != player.Id)
+        if (state.Phase != GamePhase.Main || state.ActivePlayerId != currentPlayer.Id)
             return Array.Empty<GameCommand>();
 
         List<GameCommand> actions = new();
 
         if (state.FrenzyContinuationCardInstanceId is int frenzyId)
         {
-            Card? frenzyCard = player.Board.FindByInstanceId(frenzyId);
+            Card? frenzyCard = currentPlayer.Board.FindByInstanceId(frenzyId);
 
             if (frenzyCard is not null && frenzyCard.CanAttack(state.Turn))
-                AddAttackActions(actions, frenzyCard, state.GetOpponent(player));
+                AddAttackActions(actions, frenzyCard, state.GetOpponent(currentPlayer));
 
             actions.Add(new EndTurnCommand());
 
             return actions;
         }
 
-        foreach (Card card in player.Hand.Cards)
+        foreach (Card card in currentPlayer.Hand.Cards)
             actions.Add(new PlayCardCommand(card.InstanceId));
 
-        foreach (Card card in player.Board.Cards)
+        foreach (Card card in currentPlayer.Board.Cards)
         {
             if (card.CanAttack(state.Turn))
-                AddAttackActions(actions, card, state.GetOpponent(player));
+                AddAttackActions(actions, card, state.GetOpponent(currentPlayer));
         }
 
         return actions;
@@ -481,5 +497,10 @@ public sealed class GameEngine : IGameEngine
         }
 
         return actions;
+    }
+
+    public static Player? FindPlayer(GameState state, Player player)
+    {
+        return state.Players.FirstOrDefault(p => p.Id == player.Id);
     }
 }
