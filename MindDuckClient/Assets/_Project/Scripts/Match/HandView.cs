@@ -1,6 +1,7 @@
+using MindDuck.Client.Cards;
+using MindDuck.Contracts;
 using System;
 using System.Collections.Generic;
-using MindDuck.Contracts;
 using UnityEngine;
 
 namespace MindDuck.Client.Match
@@ -12,6 +13,13 @@ namespace MindDuck.Client.Match
         [SerializeField] private Transform layoutContainer;
 
         public event Action<int> CardClicked;
+
+        private ICardCatalog _catalog;
+
+        public void Initialize(ICardCatalog catalog)
+        {
+            _catalog = catalog;
+        }
 
         public void ShowCards(IReadOnlyList<CardRefDto> cards, ICollection<int> playableIds)
         {

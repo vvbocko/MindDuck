@@ -1,3 +1,4 @@
+using MindDuck.Client.Cards;
 using MindDuck.Contracts;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,13 @@ namespace MindDuck.Client.Match
         [SerializeField] private Transform layoutContainer;
 
         public event Action<int> CreatureClicked;
+
+        private ICardCatalog _catalog;
+
+        public void Initialize(ICardCatalog catalog)
+        {
+            _catalog = catalog;
+        }
 
         public void Show(IReadOnlyList<CreatureDto> creatures, ICollection<int> highlightIds)
         {
