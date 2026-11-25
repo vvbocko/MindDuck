@@ -70,7 +70,7 @@ public sealed class GameEngine : IGameEngine
         if (state.Phase == GamePhase.AwaitingDecision)
         {
             if (command is SubmitDecisionCommand decision)
-                return ApplyDecision(state, player, decision);
+                return ApplyDecision(state, currentPlayer, decision);
 
             return ApplyResult.Failure(ApplyErrorCode.IllegalAction, "A decision is waiting for a response.");
         }
@@ -85,16 +85,16 @@ public sealed class GameEngine : IGameEngine
         {
             return command switch
             {
-                AttackCommand attack when attack.AttackerInstanceId == frenzyId => ApplyAttack(state, player, attack),
-                EndTurnCommand => SkipFrenzyAttack(state, player),
+                AttackCommand attack when attack.AttackerInstanceId == frenzyId => ApplyAttack(state, currentPlayer, attack),
+                EndTurnCommand => SkipFrenzyAttack(state, currentPlayer),
                 _ => ApplyResult.Failure(ApplyErrorCode.IllegalAction, "You must perform the additional Frenzy attack or end your turn.")
             };
         }
 
         return command switch
         {
-            PlayCardCommand play => ApplyPlayCard(state, player, play),
-            AttackCommand attack => ApplyAttack(state, player, attack),
+            PlayCardCommand play => ApplyPlayCard(state, currentPlayer, play),
+            AttackCommand attack => ApplyAttack(state, currentPlayer, attack),
             _ => ApplyResult.Failure(ApplyErrorCode.InvalidCommand, "Unsupported command.")
         };
     }
@@ -121,7 +121,7 @@ public sealed class GameEngine : IGameEngine
 
         PutIntoPlay(state, player, card);
 
-        if(CheckGameOver(state))
+        if (CheckGameOver(state))
             return ApplyResult.Success(state);
 
         EndTurn(state, player);
@@ -500,7 +500,7 @@ public sealed class GameEngine : IGameEngine
         return actions;
     }
 
-    public static Player? FindPlayer(GameState state, Player player)
+    private static Player? FindPlayer(GameState state, Player player)
     {
         return state.Players.FirstOrDefault(p => p.Id == player.Id);
     }
