@@ -102,14 +102,16 @@ class Program
         Console.WriteLine($"Oczekiwano: {expectedResponse}, otrzymano: {actualResponse}");
 
         Console.WriteLine("\n6. Test poprawnego zagrania karty");
-        //methods that allow access to players hand from server should be implemented first
-        /*await SendEnvelopeAsync(playerP1, new PlayCard { CardInstanceId = 1});
+        int cardInstanceId = GetFirstCardInstanceId(p1State);
+        Console.WriteLine($"Zagranie pierwszej karty z ręki, instanceId={cardInstanceId}");
+        
+        await SendEnvelopeAsync(playerP1, new PlayCard { CardInstanceId = cardInstanceId });
 
         Envelope? p1Update = await ReceiveEnvelopeAsync(playerP1);
         Envelope? p2Update = await ReceiveEnvelopeAsync(playerP2);
 
         Console.WriteLine($"P1 otrzymał: {p1Update?.Type ?? "null"}");
-        Console.WriteLine($"P2 otrzymał: {p2Update?.Type ?? "null"}");*/
+        Console.WriteLine($"P2 otrzymał: {p2Update?.Type ?? "null"}");
 
         await playerP1.CloseAsync(WebSocketCloseStatus.NormalClosure, "koniec", CancellationToken.None);
         await playerP2.CloseAsync(WebSocketCloseStatus.NormalClosure, "koniec", CancellationToken.None);
@@ -141,5 +143,24 @@ class Program
         string json = Encoding.UTF8.GetString(buffer, 0, result.Count);
         Console.WriteLine($"Serwer wysyła do klienta: {json}");
         return JsonSerializer.Deserialize<Envelope>(json, JsonOptions);
+    }
+
+    private static int GetFirstCardInstanceId(Envelope? stateUpdate)
+    {
+        if (stateUpdate is null ||
+            stateUpdate.Type != nameof(StateUpdate) ||
+            stateUpdate.Payload is not JsonElement payload)
+        {
+            throw new InvalidOperationException("Expected a StateUpdate message.");
+        }
+
+        JsonElement hand = payload.GetProperty("state").GetProperty("you").GetProperty("hand");
+
+        if (hand.GetArrayLength() == 0)
+        {
+            throw new InvalidOperationException("The player's hand is empty.");
+        }
+
+        return hand[0].GetProperty("instanceId").GetInt32();
     }
 }
