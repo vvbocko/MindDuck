@@ -27,6 +27,13 @@ namespace MindDuck.Client.Match
             foreach (CreatureDto creature in creatures)
             {
                 CreatureView view = Instantiate(creaturePrefab, layoutContainer);
+
+                _catalog.TryGet(creature.DefinitionId, out var definition);
+                view.Show(creature, definition);
+
+                bool isHighlighted = highlightIds.Contains(creature.InstanceId);
+                view.SetHighlighted(isHighlighted);
+
                 view.Card.Clicked += id => CreatureClicked?.Invoke(id);
             }
         }

@@ -28,6 +28,13 @@ namespace MindDuck.Client.Match
             foreach (CardRefDto card in cards)
             {
                 CardView view = Instantiate(cardPrefab, layoutContainer);
+
+                _catalog.TryGet(card.DefinitionId, out var definition);
+                view.Show(card.InstanceId, definition);
+
+                bool isCardPlayable = playableIds.Contains(card.InstanceId);
+                view.SetHighlighted(isCardPlayable);
+
                 view.Clicked += id => CardClicked?.Invoke(id);
             }
         }

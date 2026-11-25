@@ -22,8 +22,6 @@ namespace MindDuck.Client.Match
         [Header("Middle")]
         [SerializeField] private TMP_Text statusText;
 
-        private GameStateView gameState;
-
         private IGameConnection _connection;
         private GameStateView _state;
         private int _lastSequence = -1;
@@ -65,10 +63,25 @@ namespace MindDuck.Client.Match
 
         private void OnStateUpdated(StateUpdate update)
         {
+            if (update.Sequence <= _lastSequence) return;
+
+            _lastSequence = update.Sequence;
+            _state = update.State;
+            Redraw(_state);
         }
 
         private void Redraw(GameStateView state)
         {
+            bool isYourTurn = (state.ActiveSeat == state.YourSeat);
+
+            yourInfo.Show(state.You.Nickname, state.You.Life, state.You.MindbugsLeft, state.You.DrawPileCount, isYourTurn);
+            opponentInfo.Show(state.Opponent.Nickname, state.Opponent.Life, state.Opponent.MindbugsLeft, state.Opponent.DrawPileCount,!isYourTurn);
+
+            yourHand.ShowCards(state.You.Hand, state.LegalActions.PlayableCardIds);
+            opponentHand.ShowHidden(state.Opponent.HandCount);
+
+            yourBoard.Show(state.You.Board, state.LegalActions.AttackerIds);
+            opponentBoard.Show(state.Opponent.Board, new List<int>());
 
         }
 
@@ -88,7 +101,7 @@ namespace MindDuck.Client.Match
 
         private void OnMatchEnded(MatchEnded ended)
         {
-            bool youWon = gameState != null && ended.Winner == gameState.YourSeat;
+            bool youWon = _state != null && ended.Winner == _state.YourSeat;
             statusText.text = youWon ? "You won!" : $"Game over ({ended.Reason})";
             // opens game-over screen (networking/menus stuff).
         }
@@ -101,16 +114,29 @@ namespace MindDuck.Client.Match
 
         private void OnYourHandCardClicked(int cardInstanceId)
         {
-            
+            if (_state == null) return;
+
+            if (_state.LegalActions.PlayableCardIds.Contains(cardInstanceId))
+            {
+                _connection.PlayCard(cardInstanceId);
+            }
         }
 
         private void OnYourCreatureClicked(int creatureInstanceId)
         {
-            
+            if (_state == null) return;
+
+            if (_state.LegalActions.AttackerIds.Contains(creatureInstanceId))
+            {
+                _connection.Attack(creatureInstanceId);
+            }
         }
 
         private void OnOpponentCreatureClicked(int creatureInstanceId)
         {
+            if (_state == null) return;
+
+            Debug.Log($"[MatchController] boop {creatureInstanceId}");
 
         }
 
