@@ -21,6 +21,7 @@ namespace MindDuck.Server.WebSockets
         private readonly SocketMessageSender _messageSender;
         private readonly IPlayerRepository _playerRepository;
         private readonly IMatchRepository _matchRepository;
+        private readonly ICardService _cardService;
 
         public GameWebSocketHandler(
             RoomManager roomManager,
@@ -29,7 +30,8 @@ namespace MindDuck.Server.WebSockets
             GameStateViewBuilder viewBuilder,
             SocketMessageSender messageSender,
             IPlayerRepository playerRepository,
-            IMatchRepository matchRepository)
+            IMatchRepository matchRepository,
+            ICardService cardService)
         {
             _roomManager = roomManager;
             _gameService = gameService;
@@ -38,6 +40,7 @@ namespace MindDuck.Server.WebSockets
             _messageSender = messageSender;
             _playerRepository = playerRepository;
             _matchRepository = matchRepository;
+            _cardService = cardService;
         }
 
         public async Task HandleAsync(WebSocket webSocket)
@@ -214,7 +217,8 @@ namespace MindDuck.Server.WebSockets
 
             if (targetRoom.IsRoomFull && targetRoom.Player1 != null && targetRoom.Player2 != null && targetRoom.MatchId == null)
             {
-                var match = _gameService.StartMatch(targetRoom.Player1, targetRoom.Player2);
+                await _cardService.PrepareDecksAsync(targetRoom.Player1, targetRoom.Player2);
+                var match = await _gameService.StartMatchAsync(targetRoom.Player1, targetRoom.Player2);
                 bool matchSaved = false;
                 try
                 {

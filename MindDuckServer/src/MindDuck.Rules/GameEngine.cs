@@ -4,6 +4,7 @@ using MindDuck.Rules.Models;
 using MindDuck.Rules.Results;
 using MindDuck.Rules.Effects;
 using System.Data;
+using System.Threading;
 
 namespace MindDuck.Rules;
 
@@ -112,7 +113,7 @@ public sealed class GameEngine : IGameEngine
 
         if (opponent.MindDucksLeft > 0)
         {
-            state.PendingDecision = new PendingDecision(++_nextDecisionId, DecisionType.MindDuck, player, opponent, card);
+            state.PendingDecision = new PendingDecision(Interlocked.Increment(ref _nextDecisionId), DecisionType.MindDuck, player, opponent, card);
             state.Phase = GamePhase.AwaitingDecision;
 
             return ApplyResult.Success(state);
@@ -236,7 +237,7 @@ public sealed class GameEngine : IGameEngine
             return ApplyResult.Success(state);
         }
 
-        state.PendingDecision = new PendingDecision(++_nextDecisionId, DecisionType.Block, player, opponent, attacker, forcedDefenderId);
+        state.PendingDecision = new PendingDecision(Interlocked.Increment(ref _nextDecisionId), DecisionType.Block, player, opponent, attacker, forcedDefenderId);
         state.Phase = GamePhase.AwaitingDecision;
 
         return ApplyResult.Success(state);
