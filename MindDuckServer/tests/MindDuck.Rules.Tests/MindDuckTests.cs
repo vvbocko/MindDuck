@@ -1,8 +1,5 @@
-using MindDuck.Rules;
 using MindDuck.Rules.Commands;
 using MindDuck.Rules.Models;
-using MindDuck.Rules.Results;
-using Xunit;
 
 namespace MindDuck.Rules.Tests;
 
