@@ -11,6 +11,8 @@ services:
     volumes:
       - mindduck_data:/var/lib/postgresql/data
       - ./db/base/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+      - ./db/base/002-seed-cards.sql:/docker-entrypoint-initdb.d/002-seed-cards.sql:ro
+      - ./data/cards/cards.json:/tmp/cards.json:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mindduck -d mindduck"]
       interval: 5s

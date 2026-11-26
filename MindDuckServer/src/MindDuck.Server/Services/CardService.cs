@@ -6,6 +6,7 @@ using MindDuck.Rules.Models;
 using PersistenceCard = MindDuck.Persistence.Card;
 using RulesCard = MindDuck.Rules.Models.Card;
 using RulesKeyword = MindDuck.Rules.Models.Keyword;
+using System;
 
 namespace MindDuck.Server.Services;
 
@@ -29,23 +30,25 @@ public sealed class CardService(ICardRepository cardRepository) : ICardService
         }
 
         var cards = await cardRepository.GetAllCardsAsync(cancellationToken);
-        if (cards.Count == 0)
+        if (cards.Count < 20)
         {
-            throw new InvalidOperationException("The cards table contains no cards.");
+            throw new InvalidOperationException("The cards table contains too few cards :c.");
         }
 
         var definitions = cards.Select(ToDefinition).ToList();
-        AddDeck(playerOne, definitions, firstInstanceId: 1);
-        AddDeck(playerTwo, definitions, firstInstanceId: DeckSize + 1);
+        AddDecks(playerOne, playerTwo, definitions);
     }
 
-    // addes deck, not random (for some time)
-    private static void AddDeck(MindDuck.Rules.Models.Player player, IReadOnlyList<CardDefinition> definitions, int firstInstanceId)
+    private static void AddDecks(MindDuck.Rules.Models.Player player1, MindDuck.Rules.Models.Player player2, IReadOnlyList<CardDefinition> definitions)
     {
-        for (int i = 0; i < DeckSize; i++)
+        int[] permutation = Enumerable.Range(0, definitions.Count).ToArray();
+        Random.Shared.Shuffle(permutation);
+        for (int i = 0; i < 2*DeckSize; i+=2)
         {
-            var definition = definitions[i % definitions.Count];
-            player.DrawPile.Add(new RulesCard(firstInstanceId + i, definition));
+            var definition1 = definitions[permutation[i]];
+            player1.DrawPile.Add(new RulesCard(i+1, definition1));
+            var definition2 = definitions[permutation[i+1]];
+            player2.DrawPile.Add(new RulesCard(i+2, definition2));
         }
     }
 
