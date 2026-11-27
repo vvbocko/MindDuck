@@ -36,6 +36,10 @@ namespace MindDuck.Server.WebSockets
             {
                 waitingForSeat = null;
             }
+            else if(state.Phase == RulesGamePhase.AwaitingDecision && state.PendingDecision != null)
+            {
+                waitingForSeat = GetSeatByPlayerId(state, state.PendingDecision.RespondingPlayer.Id);
+            }
             else
             {
                 waitingForSeat = activeSeat;
@@ -81,6 +85,9 @@ namespace MindDuck.Server.WebSockets
             switch (phase)
             {
                 case RulesGamePhase.AwaitingDecision:
+                    return ContractGamePhase.AwaitingDecision;
+
+                case RulesGamePhase.AwaitingBlock:
                     return ContractGamePhase.AwaitingDecision;
 
                 case RulesGamePhase.Finished:
@@ -167,6 +174,15 @@ namespace MindDuck.Server.WebSockets
             view.Board = boardCreatures;
 
             return view;
+        }
+
+        private static PlayerSeat GetSeatByPlayerId(GameState state, int? playerId)
+        {
+            if (playerId.HasValue && state.Players.Count > 0 && playerId.Value == state.Players[0].Id)
+            {
+                return PlayerSeat.P1;
+            }
+            return PlayerSeat.P2;
         }
     }
 }

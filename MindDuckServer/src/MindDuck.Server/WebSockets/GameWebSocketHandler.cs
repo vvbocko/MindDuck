@@ -10,6 +10,7 @@ using MindDuck.Rules;
 using MindDuck.Rules.Models;
 using MindDuck.Rules.Commands;
 using Player = MindDuck.Rules.Models.Player;
+using System.Collections;
 
 namespace MindDuck.Server.WebSockets
 {
@@ -22,6 +23,7 @@ namespace MindDuck.Server.WebSockets
         private readonly IPlayerRepository _playerRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly ICardService _cardService;
+        private readonly IGameEngine _gameEngine;
 
         public GameWebSocketHandler(
             RoomManager roomManager,
@@ -31,7 +33,8 @@ namespace MindDuck.Server.WebSockets
             SocketMessageSender messageSender,
             IPlayerRepository playerRepository,
             IMatchRepository matchRepository,
-            ICardService cardService)
+            ICardService cardService,
+            IGameEngine gameEngine)
         {
             _roomManager = roomManager;
             _gameService = gameService;
@@ -41,6 +44,7 @@ namespace MindDuck.Server.WebSockets
             _playerRepository = playerRepository;
             _matchRepository = matchRepository;
             _cardService = cardService;
+            _gameEngine = gameEngine;
         }
 
         public async Task HandleAsync(WebSocket webSocket)
@@ -254,6 +258,7 @@ namespace MindDuck.Server.WebSockets
                     await _messageSender.SendAsync(targetRoom.Player2Socket, matchStarted);
                 }
                 await SendGameStateAsync(targetRoom, match);
+                await SendDecisionToDecidingPlayerAsync(targetRoom, match);
             }
             return (targetRoom, assignedSeat);
         }
@@ -262,6 +267,9 @@ namespace MindDuck.Server.WebSockets
         {
             Player? actingPlayer = room.GetPlayer(seat);
             if (actingPlayer == null || room.MatchId == null || rawPayload is not JsonElement payloadElement) return;
+
+            var currentMatch = _matchManager.GetMatch(room.MatchId.Value);
+            if (currentMatch == null) return;
 
             GameCommand? command = null;
             switch (messageType)
@@ -281,13 +289,21 @@ namespace MindDuck.Server.WebSockets
                         command = new AttackCommand(attack.CreatureInstanceId);
                     }
                     break;
+                
+                case nameof(SubmitDecision):
+                    SubmitDecision? submitDecision = payloadElement.Deserialize<SubmitDecision>(SocketMessageSender.JsonOptions);
+                    if (submitDecision != null && !string.IsNullOrWhiteSpace(submitDecision.OptionId))
+                    {
+                        command = CreateSubmitDecisionCommand(currentMatch, actingPlayer, submitDecision);
+                    }
+                    break;
 
                 default:
                     command = null;
                     break;
             }
 
-            if (command == null && messageType != nameof(PlayCard) && messageType != nameof(Attack))
+            if (command == null && messageType != nameof(PlayCard) && messageType != nameof(Attack) && messageType != nameof(SubmitDecision))
             {
                 await _messageSender.SendAsync(webSocket, new Error
                 {
@@ -303,6 +319,32 @@ namespace MindDuck.Server.WebSockets
                 {
                     Code = ErrorCode.BadJson,
                     Message = $"Niepoprawny payload dla {messageType}."
+                });
+                return;
+            }
+
+            if ((currentMatch.GameState.Phase == MindDuck.Rules.Models.GamePhase.AwaitingDecision || currentMatch.GameState.Phase == MindDuck.Rules.Models.GamePhase.AwaitingBlock) && command is not SubmitDecisionCommand)
+            {
+                string decisionMessage;
+                switch (currentMatch.GameState.PendingDecision?.Type)
+                {
+                    case DecisionType.Block:
+                        decisionMessage = "blokowanie ataku";
+                        break;
+
+                    case DecisionType.MindDuck:
+                        decisionMessage = "użycie Mindbuga";
+                        break;
+
+                    default:
+                        decisionMessage = "decyzja w toku";
+                        break;
+                }
+                
+                await _messageSender.SendAsync(webSocket, new ActionRejected
+                {
+                    Code = ErrorCode.IllegalMove,
+                    Message = $"Oczekiwanie na decyzję {decisionMessage}" 
                 });
                 return;
             }
@@ -331,6 +373,113 @@ namespace MindDuck.Server.WebSockets
 
             var match = _matchManager.GetMatch(room.MatchId.Value);
             await SendGameStateAsync(room, match);
+            await SendDecisionToDecidingPlayerAsync(room, match);
+        }
+
+        private SubmitDecisionCommand? CreateSubmitDecisionCommand(Match match, Player actingPlayer, SubmitDecision submitDecision)
+        {
+            IReadOnlyList<GameCommand> legalActions = _gameEngine.GetLegalActions(match.GameState, actingPlayer);
+            for (int i = 0; i < legalActions.Count; i++)
+            {
+                if (legalActions[i] is SubmitDecisionCommand)
+                {
+                    SubmitDecisionCommand legalDecision = (SubmitDecisionCommand)legalActions[i];
+                    string legalOptionId = FormatOptionId(legalDecision);
+                    if (legalDecision.DecisionId == submitDecision.DecisionId && legalOptionId == submitDecision.OptionId)
+                    {
+                        return new SubmitDecisionCommand(
+                            submitDecision.DecisionId,
+                            legalDecision.DecisionType,
+                            legalDecision.Accepted,
+                            legalDecision.DefenderCardId);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private async Task SendDecisionToDecidingPlayerAsync(Room room, Match match)
+        {
+            GameState state = match.GameState;
+            if ((state.Phase != MindDuck.Rules.Models.GamePhase.AwaitingDecision && state.Phase != MindDuck.Rules.Models.GamePhase.AwaitingBlock) || state.PendingDecision == null)
+            {
+                return;
+            }
+
+            PendingDecision pendingDecision = state.PendingDecision;
+            Player decidingPlayer = pendingDecision.RespondingPlayer;
+
+            WebSocket? targetSocket = null;
+
+            if (room.Player1 != null && room.Player1.Id == decidingPlayer.Id)
+            {
+                targetSocket = room.Player1Socket;
+            }
+            else if (room.Player2 != null && room.Player2.Id == decidingPlayer.Id)
+            {
+                targetSocket = room.Player2Socket;
+            }
+
+            if (targetSocket == null || targetSocket.State != WebSocketState.Open)
+            {
+                return;
+            }
+
+            DecisionKind kind;
+            switch (pendingDecision.Type)
+            {
+                case DecisionType.Block:
+                    kind = DecisionKind.Block;
+                    break;
+
+                case DecisionType.MindDuck:
+                default:
+                    kind = DecisionKind.UseMindbug;
+                    break;
+            }
+
+            List<DecisionOptionDto> options = new List<DecisionOptionDto>();
+            IReadOnlyList<GameCommand> legalActions = _gameEngine.GetLegalActions(state, decidingPlayer);
+            for (int i = 0; i < legalActions.Count; i++)
+            {
+                if (legalActions[i] is SubmitDecisionCommand legalDecision && legalDecision.DecisionId == pendingDecision.DecisionId)
+                {
+                    string optionId = FormatOptionId(legalDecision);
+                    options.Add(new DecisionOptionDto
+                    {
+                        OptionId = optionId,
+                        TargetInstanceId = legalDecision.DefenderCardId,
+                        Label = optionId
+                    });
+                }
+            }
+
+            DecisionRequired message = new DecisionRequired
+            {
+                DecisionId = pendingDecision.DecisionId,
+                Kind = kind,
+                SubjectCardInstanceId = pendingDecision.Card.InstanceId,
+                Prompt = string.Empty,
+                Options = options
+            };
+
+            await _messageSender.SendAsync(targetSocket, message);
+        }
+
+        private static string FormatOptionId(SubmitDecisionCommand command)
+        {
+            if (!command.Accepted)
+            {
+                return "decline";
+            }
+
+            if (command.DefenderCardId.HasValue)
+            {
+                return $"block:{command.DefenderCardId.Value}";
+            }
+
+            return "accept";
         }
 
         private async Task SendGameStateAsync(Room room, Match match)
@@ -359,44 +508,3 @@ namespace MindDuck.Server.WebSockets
     }
 }
 
-            
-
-
-/*
-await targetRoom.JoinLock.WaitAsync();
-            try
-            {
-                if (targetRoom.IsRoomFull)
-                {
-                    await SendMessageAsync(webSocket, new Error
-                    {
-                        Code = ErrorCode.RoomFull,
-                        Message = "Room is full."
-                    });
-                    return;
-                }
-
-                var player = await _playerRepository.CreatePlayerAsync(playerNickname);
-                var assignedSeat = targetRoom.AddPlayer(player.Name, player.Id, out string generatedToken);
-
-                string? opponentName = null;
-                if (assignedSeat == PlayerSeat.P2)
-                {
-                    opponentName = targetRoom.Player1Nickname;
-                }
-
-                var roomJoinedMessage = new RoomJoined
-                {
-                    RoomCode = targetRoom.RoomCode,
-                    Seat = assignedSeat,
-                    PlayerToken = generatedToken,
-                    OpponentNickname = opponentName
-                };
-                await SendMessageAsync(webSocket, roomJoinedMessage);
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Zakończono dołączanie", CancellationToken.None);
-            }
-            finally
-            {
-                targetRoom.JoinLock.Release();
-            }
-*/
