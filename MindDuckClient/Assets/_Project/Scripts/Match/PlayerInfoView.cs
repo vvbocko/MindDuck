@@ -9,7 +9,6 @@ namespace MindDuck.Client.Match
         [SerializeField] private TMP_Text livesNumberText;
         [SerializeField] private TMP_Text mindducksNumberText;
         [SerializeField] private TMP_Text drawPileText;
-        [SerializeField] private GameObject activeTurnMarker;
 
         public void Show(string nickname, int life, int mindducksLeft, int drawPileCount, bool isTheirTurn)
         {
@@ -17,7 +16,6 @@ namespace MindDuck.Client.Match
             livesNumberText.SetText("HP:  " + life);
             mindducksNumberText.SetText("MindDucks:  " + mindducksLeft);
             drawPileText.SetText("Draw cards pile:  " + drawPileCount);
-            activeTurnMarker.SetActive(isTheirTurn);
         }
     }
 }

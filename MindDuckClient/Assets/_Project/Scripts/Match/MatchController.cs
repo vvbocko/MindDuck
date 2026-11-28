@@ -21,6 +21,9 @@ namespace MindDuck.Client.Match
 
         [Header("Middle")]
         [SerializeField] private TMP_Text statusText;
+        [SerializeField] private DecisionPanel decisionPanel;
+
+        private static readonly List<int> NoIds = new List<int>();
 
         private IGameConnection _connection;
         private GameStateView _state;
@@ -39,12 +42,17 @@ namespace MindDuck.Client.Match
             yourBoard.CreatureClicked += OnYourCreatureClicked;
             opponentBoard.CreatureClicked += OnOpponentCreatureClicked;
 
+            _connection.MatchStarted += OnMatchStarted;
             _connection.StateUpdated += OnStateUpdated;
             _connection.DecisionRequired += OnDecisionRequired;
             _connection.ActionRejected += OnActionRejected;
             _connection.OpponentConnectionChanged += OnOpponentConnectionChanged;
             _connection.MatchEnded += OnMatchEnded;
             _connection.ConnectionLost += OnConnectionLost;
+            _connection.Error += OnError;
+
+            decisionPanel.OptionChosen += OnDecisionOptionChosen;
+            decisionPanel.Hide();
 
             statusText.text = "Connecting...";
         }
@@ -53,12 +61,21 @@ namespace MindDuck.Client.Match
         {
             if (_connection == null) return;
 
+            _connection.MatchStarted -= OnMatchStarted;
             _connection.StateUpdated -= OnStateUpdated;
             _connection.DecisionRequired -= OnDecisionRequired;
             _connection.ActionRejected -= OnActionRejected;
             _connection.OpponentConnectionChanged -= OnOpponentConnectionChanged;
             _connection.MatchEnded -= OnMatchEnded;
             _connection.ConnectionLost -= OnConnectionLost;
+            _connection.Error -= OnError;
+            
+            decisionPanel.OptionChosen -= OnDecisionOptionChosen;
+        }
+
+        private void OnMatchStarted(MatchStarted started)
+        {
+            statusText.text = "Match started!";
         }
 
         private void OnStateUpdated(StateUpdate update)
@@ -67,7 +84,10 @@ namespace MindDuck.Client.Match
 
             _lastSequence = update.Sequence;
             _state = update.State;
+
             Redraw(_state);
+
+            // could ad danimations? use update.Events
         }
 
         private void Redraw(GameStateView state)
@@ -81,17 +101,27 @@ namespace MindDuck.Client.Match
             opponentHand.ShowHidden(state.Opponent.HandCount);
 
             yourBoard.Show(state.You.Board, state.LegalActions.AttackerIds);
-            opponentBoard.Show(state.Opponent.Board, new List<int>());
+            opponentBoard.Show(state.Opponent.Board, NoIds);
 
+            statusText.text = DescribeTurn(state);
+
+            bool waitingForYourDecision = state.Phase == GamePhase.AwaitingDecision && state.WaitingForSeat == state.YourSeat;
+            if (!waitingForYourDecision)
+            {
+                decisionPanel.Hide();
+            }
         }
 
         private void OnDecisionRequired(DecisionRequired decision)
         {
-            // show DecisionPanel (networking/menus)
+            decisionPanel.Show(decision);
+            Debug.Log($"[MatchController] Decision {decision.DecisionId} ({decision.Kind}): {decision.Prompt}");
         }
 
         private void OnActionRejected(ActionRejected rejected)
         {
+            statusText.text = rejected.Message;
+            Debug.LogWarning($"[MatchController] Rejected: {rejected.Code} - {rejected.Message}");
         }
 
         private void OnOpponentConnectionChanged(bool isConnected, int secondsLeft)
@@ -101,6 +131,8 @@ namespace MindDuck.Client.Match
 
         private void OnMatchEnded(MatchEnded ended)
         {
+            decisionPanel.Hide();
+
             bool youWon = _state != null && ended.Winner == _state.YourSeat;
             statusText.text = youWon ? "You won!" : $"Game over ({ended.Reason})";
             // opens game-over screen (networking/menus stuff).
@@ -109,6 +141,12 @@ namespace MindDuck.Client.Match
         private void OnConnectionLost()
         {
             statusText.text = "Connection lost";
+        }
+
+        private void OnError(Error error)
+        {
+            statusText.text = "Error: " + error.Message;
+            Debug.LogWarning($"[MatchController] Server error ({error.Code}): {error.Message}");
         }
 
 
@@ -140,9 +178,26 @@ namespace MindDuck.Client.Match
 
         }
 
+        private void OnDecisionOptionChosen(int decisionId, string optionId)
+        {
+            _connection.SubmitDecision(decisionId, optionId);
+        }
+
         private static string DescribeTurn(GameStateView state)
         {
-            return state.ToString();
+            if (state.Phase == GamePhase.GameOver) return "Game over";
+
+            if (state.Phase == GamePhase.AwaitingDecision)
+            {
+                return state.WaitingForSeat == state.YourSeat
+                    ? "Your decision..."
+                    : $"Waiting for {state.Opponent.Nickname}...";
+            }
+
+            return state.ActiveSeat == state.YourSeat
+                ? $"Turn {state.TurnNumber}: your turn - play a card or attack"
+                : $"Turn {state.TurnNumber}: {state.Opponent.Nickname}'s turn";
+          
         }
     }
 }

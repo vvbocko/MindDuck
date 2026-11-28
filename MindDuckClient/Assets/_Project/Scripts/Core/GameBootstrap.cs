@@ -37,9 +37,7 @@ namespace MindDuck.Client.Core
                 }
                 else
                 {
-                    // TODO (networking owner): _connection = new WebSocketGameConnection();
-                    Debug.LogError("[GameBootstrap] The real WebSocketGameConnection doesn't exist yet - tick 'Use Fake Server'.");
-                    return;
+                    _connection = new WebSocketGameConnection();
                 }
 
                 matchController.Initialize(_connection, catalog);
